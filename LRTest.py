@@ -10,10 +10,9 @@ from scipy import sparse
 import datetime
 
 
-training_X_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\training.X.2.sci"
-# training_X_file = "C:\\Development\\dataset\\KDD Cup 2012 track2\\sample\\training.X.2.sci"
+training_X_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\embedding\\training.X3.embedding"
 training_Y_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\training.Y"
-test_X_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\test.X.2.sci"
+test_X_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\embedding\\test.X3.embedding"
 test_Y_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\test.Y"
 
 
@@ -40,8 +39,9 @@ def readcoo(filename):
 
 
 def lr():
-    classifier = LogisticRegression(C=2.0, dual=True, n_jobs=2)
-    #
+    begin = datetime.datetime.now()
+    classifier = LogisticRegression(n_jobs=2)
+
     training_x = readcoo(training_X_file)
     training_y = np.loadtxt(open(training_Y_file), dtype=int)
     print "Loading data completed."
@@ -52,7 +52,8 @@ def lr():
     # cross_val_score(classifier, training_x, training_y, cv=10)
     # print "Cross validation completed."
 
-    joblib.dump(classifier, "train_model_3" + ".pkl", compress=3)      #加个3，是压缩，一般用这个
+    joblib.dump(classifier, "train_model_embedding_3" + ".pkl", compress=3)      #加个3，是压缩，一般用这个
+
     # classifier = joblib.load("train_model_2.pkl")
 
     test_x = readcoo(test_X_file)
@@ -65,19 +66,19 @@ def lr():
     prob_test = classifier.predict_proba(test_x)[:, 1]  # proba得到两行, 一行错的一行对的,对的是点击的概率，错的是不点的概率
     auc_test = metrics.roc_auc_score(test_y, prob_test)
 
+    end = datetime.datetime.now()
     log_file = open("result/lr_baseline", "a")
-    log_file.write("id + ctr:" + '\n')
+    log_file.write("id + ctr + similarity + cos:" + '\n')
     log_file.write("score: " + str(score) + '\n')
-    # log_file.write("auc_train: " + str(auc_train) + '\n')
-    log_file.write("auc_test: " + str(auc_test) + '\n' + '\n')
+    log_file.write("auc_test: " + str(auc_test) + '\n')
+    log_file.write("time: " + str(end - begin) + '\n' + '\n')
     log_file.close()
 
 
 if __name__ == '__main__':
-    begin = datetime.datetime.now()
+
     lr()
-    end = datetime.datetime.now()
-    print end - begin
+
     # test_y = np.loadtxt(open(test_Y_file), dtype=int)
     # pred_y_file = "D:\\Dvlp_workspace\\SAD\\libfm-1.40.windows\\output2.libfm"
     # pred_y = np.loadtxt(open(pred_y_file))

@@ -20,3 +20,21 @@ C=1.0, class_weight={1: 0.8, 0: 0.2}, n_jobs=2
 score: 0.942810571894
 auc_test: 0.733101564564
 
+id + ctr + similarity, C = 2.0, dual = true:
+score: 0.947645523545
+auc_test: 0.704467698148
+
+id + ctr + query-title, default:
+score: 0.952035479645
+auc_test: 0.73501222447
+
+id + ctr + similarity, default:
+score: 0.951955480445
+auc_test: 0.738469134996
+time: 0:09:23.613000
+
+id + ctr + similarity + cos:
+score: 0.951910480895
+auc_test: 0.736612020869
+time: 0:11:52.317000
+
