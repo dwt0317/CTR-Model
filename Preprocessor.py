@@ -2,14 +2,14 @@
 
 import pandas as pd
 from Utils import file_len, list2dict
+import Constants
 
-dir_path = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\"
-
+# 采样
 def sample():
-    file_read = open(dir_path + "training.txt")
-    file_train = open(dir_path + "sample\\training.part",'w')
-    file_valid = open(dir_path + "sample\\validation.part",'w')
-    file_test = open(dir_path + "sample\\test.part", 'w')
+    file_read = open(Constants.dir_path + "training.txt")
+    file_train = open(Constants.dir_path + "sample\\training.part",'w')
+    file_valid = open(Constants.dir_path + "sample\\validation.part",'w')
+    file_test = open(Constants.dir_path + "sample\\test.part", 'w')
     i = 0
     for line in file_read:
         # file_train.write(line)
@@ -31,8 +31,8 @@ def sample():
 
 
 def build_Y():
-    file_read = open(dir_path + "sample\\test.part")
-    file_Y = open(dir_path + "sample\\test.Y", 'w')
+    file_read = open(Constants.dir_path + "sample\\test.part")
+    file_Y = open(Constants.dir_path + "sample\\test.Y", 'w')
     for line in file_read:
         y = line[:1]
         if int(y) > 0 : y = 1
@@ -63,7 +63,7 @@ def build_ctr(idset):
     impre_ad, impre_ader, impre_keyword, impre_user, impre_query, impre_title = {}, {}, {}, {}, {}, {}
     click_ad, click_ader, click_keyword, click_user, click_query, click_title = {}, {}, {}, {}, {}, {}
 
-    stat_file = open(dir_path + "sample\\total.part",'r')
+    stat_file = open(Constants.dir_path + "sample\\total.part",'r')
     for line in stat_file:            # 迭代pandas太慢了，不要用
         row = line.strip('\n').split('\t')
         impre_ad[row[3]] = 1 + impre_ad.setdefault(row[3], 0)
@@ -87,7 +87,7 @@ def build_ctr(idset):
 
 # query-title, query-description, use start end to locate row of record
 def build_similarity_features(start):
-    simi_feature_file = open(dir_path + "sample\\mapping\\txtCosDistance.feature")
+    simi_feature_file = open(Constants.dir_path + "sample\\mapping\\txtCosDistance_2.feature")
     query_title_simi = []
     query_desc_simi = []
     for line in simi_feature_file:
@@ -97,6 +97,7 @@ def build_similarity_features(start):
     print "similarity:" + query_title_simi[start], query_desc_simi[start]
     return query_title_simi[start:], query_desc_simi[start:]
 
+# 构造id类特征
 def build_id_features(stat):
     adIDs = list2dict(stat[3].unique().tolist())
     aderIDs = list2dict(stat[4].unique().tolist())
@@ -129,14 +130,14 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
 
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start)
 
-    # position * 2, user * 2, CTR * 6, similarity * 1, id * (6 + lens)
+    # position * 2, user * 2, CTR * 6, similarity * 2, id * (6(unknown) + lens)
     n = 2 + 2 + 6 + 2 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
     print n
 
     # coordinate sparse matrix
     m = file_len(file_read.name)
     # file_write.write("%%MatrixMarket matrix coordinate integer general" + '\n' + "%" +'\n');  # mm sparse matrix
-    file_write.write(str(m) + " " + str(n) + " " + str(m*16) + '\n')   # row, column, number of values
+    file_write.write(str(m) + " " + str(n) + " " + str(m*18) + '\n')   # row, column, number of values
 
     row = 0
     for line in file_read:
@@ -220,7 +221,7 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
 
 def build_user_profile():
     # make user raw data
-    user_profile_file = open(dir_path + "userid_profile.txt")
+    user_profile_file = open(Constants.dir_path + "userid_profile.txt")
     user_profile = [['0', '0']]
     for line in user_profile_file:
         fields = line.strip('\n').split('\t')
@@ -230,22 +231,22 @@ def build_user_profile():
 
 
 def build_x():
-    stat = pd.read_csv(dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
+    stat = pd.read_csv(Constants.dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
     print "Reading file finished."
 
     adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = build_id_features(stat)
-    idset = [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]   #shallow copy, idset[0]和adIDs指向同一地址
+    idset = [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]   # shallow copy, idset[0]和adIDs指向同一地址
     ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = build_ctr(idset)
     ctr_set = [ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user]
     user_profile = build_user_profile()
 
     # data file definition
-    train_from = open(dir_path + "sample\\training.part")
-    train_to = open(dir_path + "sample\\embedding\\training.X3.embedding", "w")
-    valid_from = open(dir_path + "sample\\validation.part")
-    valid_to = open(dir_path + "sample\\embedding\\validation.X3.embedding", "w")
-    test_from = open(dir_path + "sample\\test.part")
-    test_to = open(dir_path + "sample\\embedding\\test.X3.embedding", "w")
+    train_from = open(Constants.dir_path + "sample\\training.part")
+    train_to = open(Constants.dir_path + "sample\\embedding\\training.X3.embedding", "w")
+    valid_from = open(Constants.dir_path + "sample\\validation.part")
+    valid_to = open(Constants.dir_path + "sample\\embedding\\validation.X3.embedding", "w")
+    test_from = open(Constants.dir_path + "sample\\test.part")
+    test_to = open(Constants.dir_path + "sample\\embedding\\test.X3.embedding", "w")
 
     build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0)
     build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000)

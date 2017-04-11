@@ -8,12 +8,12 @@ import numpy as np
 from scipy import io
 from scipy import sparse
 import datetime
+import Constants
 
-
-training_X_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\embedding\\training.X3.embedding"
-training_Y_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\training.Y"
-test_X_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\embedding\\test.X3.embedding"
-test_Y_file = "G:\\Exchange\\searchAD\\grad_project\\data\\KDD Cup 2012 track2\\sample\\test.Y"
+training_X_file = Constants.dir_path + "sample\\embedding\\training.X3.embedding"
+training_Y_file = Constants.dir_path + "sample\\training.Y"
+test_X_file = Constants.dir_path + "sample\\embedding\\test.X3.embedding"
+test_Y_file = Constants.dir_path + "sample\\test.Y"
 
 
 # read coo format matrix from file
@@ -41,7 +41,7 @@ def readcoo(filename):
 def lr():
     begin = datetime.datetime.now()
     classifier = LogisticRegression(n_jobs=2)
-
+    # training_x = np.loadtxt(open(training_Y_file), dtype=int)
     training_x = readcoo(training_X_file)
     training_y = np.loadtxt(open(training_Y_file), dtype=int)
     print "Loading data completed."
@@ -52,7 +52,7 @@ def lr():
     # cross_val_score(classifier, training_x, training_y, cv=10)
     # print "Cross validation completed."
 
-    joblib.dump(classifier, "train_model_embedding_3" + ".pkl", compress=3)      #加个3，是压缩，一般用这个
+    joblib.dump(classifier, "train_model_embedding_4" + ".pkl", compress=3)      #加个3，是压缩，一般用这个
 
     # classifier = joblib.load("train_model_2.pkl")
 
@@ -68,7 +68,7 @@ def lr():
 
     end = datetime.datetime.now()
     log_file = open("result/lr_baseline", "a")
-    log_file.write("id + ctr + similarity + cos:" + '\n')
+    log_file.write("id + ctr + similarity + cos + clean:" + '\n')
     log_file.write("score: " + str(score) + '\n')
     log_file.write("auc_test: " + str(auc_test) + '\n')
     log_file.write("time: " + str(end - begin) + '\n' + '\n')
