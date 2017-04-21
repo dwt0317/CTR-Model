@@ -10,9 +10,9 @@ from scipy import sparse
 import datetime
 import Constants
 
-training_X_file = Constants.dir_path + "sample\\embedding\\training.X3.embedding"
+training_X_file = Constants.dir_path + "sample\\embedding\\training.X4.embedding"
 training_Y_file = Constants.dir_path + "sample\\training.Y"
-test_X_file = Constants.dir_path + "sample\\embedding\\test.X3.embedding"
+test_X_file = Constants.dir_path + "sample\\embedding\\test.X4.embedding"
 test_Y_file = Constants.dir_path + "sample\\test.Y"
 
 
@@ -52,7 +52,7 @@ def lr():
     # cross_val_score(classifier, training_x, training_y, cv=10)
     # print "Cross validation completed."
 
-    joblib.dump(classifier, "train_model_embedding_4" + ".pkl", compress=3)      #加个3，是压缩，一般用这个
+    joblib.dump(classifier, "train_model_norm_clean" + ".pkl", compress=3)      #加个3，是压缩，一般用这个
 
     # classifier = joblib.load("train_model_2.pkl")
 
@@ -68,7 +68,7 @@ def lr():
 
     end = datetime.datetime.now()
     log_file = open("result/lr_baseline", "a")
-    log_file.write("id + ctr + similarity + cos + clean:" + '\n')
+    log_file.write("id + ctr + similarity + norm + clean:" + '\n')
     log_file.write("score: " + str(score) + '\n')
     log_file.write("auc_test: " + str(auc_test) + '\n')
     log_file.write("time: " + str(end - begin) + '\n' + '\n')

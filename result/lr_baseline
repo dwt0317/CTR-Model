@@ -28,7 +28,7 @@ id + ctr + query-title, default:
 score: 0.952035479645
 auc_test: 0.73501222447
 
-id + ctr + similarity, default:
+id + ctr + similarity + norm, default:
 score: 0.951955480445
 auc_test: 0.738469134996
 time: 0:09:23.613000
@@ -37,4 +37,14 @@ id + ctr + similarity + cos:
 score: 0.951910480895
 auc_test: 0.736612020869
 time: 0:11:52.317000
+
+id + ctr + similarity + cos + clean:
+score: 0.951725482745
+auc_test: 0.737977969281
+time: 0:08:32.931000
+
+id + ctr + similarity + norm + clean:
+score: 0.951955480445
+auc_test: 0.738622810815
+time: 0:06:24.152000
 

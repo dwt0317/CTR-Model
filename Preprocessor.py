@@ -87,7 +87,7 @@ def build_ctr(idset):
 
 # query-title, query-description, use start end to locate row of record
 def build_similarity_features(start):
-    simi_feature_file = open(Constants.dir_path + "sample\\mapping\\txtCosDistance_2.feature")
+    simi_feature_file = open(Constants.dir_path + "sample\\mapping\\txtNormDistance_2.feature")
     query_title_simi = []
     query_desc_simi = []
     for line in simi_feature_file:
@@ -242,11 +242,11 @@ def build_x():
 
     # data file definition
     train_from = open(Constants.dir_path + "sample\\training.part")
-    train_to = open(Constants.dir_path + "sample\\embedding\\training.X3.embedding", "w")
+    train_to = open(Constants.dir_path + "sample\\embedding\\training.X4.embedding", "w")
     valid_from = open(Constants.dir_path + "sample\\validation.part")
-    valid_to = open(Constants.dir_path + "sample\\embedding\\validation.X3.embedding", "w")
+    valid_to = open(Constants.dir_path + "sample\\embedding\\validation.X4.embedding", "w")
     test_from = open(Constants.dir_path + "sample\\test.part")
-    test_to = open(Constants.dir_path + "sample\\embedding\\test.X3.embedding", "w")
+    test_to = open(Constants.dir_path + "sample\\embedding\\test.X4.embedding", "w")
 
     build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0)
     build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000)
