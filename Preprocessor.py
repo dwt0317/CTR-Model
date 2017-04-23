@@ -120,8 +120,21 @@ def build_id_features(stat):
     print "Building id finished."
     return adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs
 
+# 以coordinate稀疏矩阵存储
+def write_as_coor(features, file_write, row):
+    for col in features.keys():  # row and column of matrix market start from 1, coo matrix start from 0
+        file_write.write(str(row) + " " + str(col) + " " + str(features[col]) + '\n')
 
-# 以scipy稀疏矩阵形式存储
+
+# 以libfm形式存储
+def write_as_libfm(features, file_write, fields):
+    file_write.write(fields[0]+' ')   # write y  libfm
+    for col in features.keys():  # row and column of matrix market start from 1, coo matrix start from 0
+        file_write.write(str(col) + ":" + str(features[col]) + ' ')
+    file_write.write('\n')
+
+
+# 以scipy稀疏矩阵形式存储, similarity_start标记相似度特征的起始位置
 def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similarity_start):
     adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4] \
         , idset[5]
@@ -131,13 +144,16 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start)
 
     # position * 2, user * 2, CTR * 6, similarity * 2, id * (6(unknown) + lens)
-    n = 2 + 2 + 6 + 2 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
+    # n = 2 + 2 + 6 + 2 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
+    n = 2 + 2 + 6 + 2 + 6
     print n
 
-    # coordinate sparse matrix
     m = file_len(file_read.name)
     # file_write.write("%%MatrixMarket matrix coordinate integer general" + '\n' + "%" +'\n');  # mm sparse matrix
-    file_write.write(str(m) + " " + str(n) + " " + str(m*18) + '\n')   # row, column, number of values
+
+    file_format = "libfm"
+    if file_format == "coordinate":
+        file_write.write(str(m) + " " + str(n) + " " + str(m * 18) + '\n')  # row, column, number of values
 
     row = 0
     for line in file_read:
@@ -164,52 +180,52 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
         features[10] = query_title_similarity[row]
         features[11] = query_desc_similarity[row]
 
-        # ID [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]
-        # ID类特征第一位留给unknown,所有整体后移一位
-        offset = 12
-        try:
-            features[offset + adIDs[fields[3]] + 1] = 1     # 使用setdefault会改变矩阵的大小
-        except IndexError:                                  # 不要使用value.key in dict.keys()，这样会新建一个key的list,
-            features[offset] = 1                            # 可以用value.key in dict
-        offset += (len(adIDs) + 1)
+        if False:
+            # ID [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]
+            # ID类特征第一位留给unknown,所有整体后移一位
+            offset = 12
+            try:
+                features[offset + adIDs[fields[3]] + 1] = 1     # 使用setdefault会改变矩阵的大小
+            except IndexError:                                  # 不要使用value.key in dict.keys()，这样会新建一个key的list,
+                features[offset] = 1                            # 可以用value.key in dict
+            offset += (len(adIDs) + 1)
 
-        try:
-            features[offset + aderIDs[fields[4]] + 1] = 1
-        except KeyError:
-            features[offset] = 1
-        offset += (len(aderIDs) + 1)
+            try:
+                features[offset + aderIDs[fields[4]] + 1] = 1
+            except KeyError:
+                features[offset] = 1
+            offset += (len(aderIDs) + 1)
 
-        try:
-            features[offset + queryIDs[fields[7]] + 1] = 1
-        except KeyError:
-            features[offset] = 1
-        offset += (len(queryIDs) + 1)
+            try:
+                features[offset + queryIDs[fields[7]] + 1] = 1
+            except KeyError:
+                features[offset] = 1
+            offset += (len(queryIDs) + 1)
 
-        try:
-            features[offset + keywordIDs[fields[8]] + 1] = 1
-        except KeyError:
-            features[offset] = 1
-        offset += (len(keywordIDs) + 1)
+            try:
+                features[offset + keywordIDs[fields[8]] + 1] = 1
+            except KeyError:
+                features[offset] = 1
+            offset += (len(keywordIDs) + 1)
 
-        try:
-            features[offset + titleIDs[fields[9]] + 1] = 1
-        except KeyError:
-            features[offset] = 1
-        offset += (len(titleIDs) + 1)
+            try:
+                features[offset + titleIDs[fields[9]] + 1] = 1
+            except KeyError:
+                features[offset] = 1
+            offset += (len(titleIDs) + 1)
 
-        try:
-            features[offset + userIDs[fields[11]] + 1] = 1
-        except KeyError:
-            features[offset] = 1
+            try:
+                features[offset + userIDs[fields[11]] + 1] = 1
+            except KeyError:
+                features[offset] = 1
 
         if int(fields[0]) > 0:
             fields[0] = '1'
 
-        # file_write.write(fields[0]+' ')   # write y  libfm
-        for col in features.keys():   # row and column of matrix market start from 1, coo matrix start from 0
-            file_write.write(str(row) + " " + str(col) + " " + str(features[col]) + '\n')
-            # file_write.write(str(col) + ":" + str(features[col]) + ' ')    # libfm
-        # file_write.write('\n') # libfm
+        if file_format == "coordinate":
+            write_as_coor(features, file_write, row)
+        else:
+            write_as_libfm(features, file_write, fields)
 
         if row % 500000 == 0:
             print row
@@ -242,11 +258,11 @@ def build_x():
 
     # data file definition
     train_from = open(Constants.dir_path + "sample\\training.part")
-    train_to = open(Constants.dir_path + "sample\\embedding\\training.X4.embedding", "w")
+    train_to = open(Constants.dir_path + "sample\\features\\training.gbdt.libfm", "w")
     valid_from = open(Constants.dir_path + "sample\\validation.part")
-    valid_to = open(Constants.dir_path + "sample\\embedding\\validation.X4.embedding", "w")
+    valid_to = open(Constants.dir_path + "sample\\features\\validation.gbdt.libfm", "w")
     test_from = open(Constants.dir_path + "sample\\test.part")
-    test_to = open(Constants.dir_path + "sample\\embedding\\test.X4.embedding", "w")
+    test_to = open(Constants.dir_path + "sample\\features\\test.gbdt.libfm", "w")
 
     build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0)
     build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000)
