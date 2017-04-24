@@ -1,93 +1,25 @@
 # -*- coding:utf-8 -*-
 
 import pandas as pd
-from Utils import file_len, list2dict
-import Constants
-
-# 采样
-def sample():
-    file_read = open(Constants.dir_path + "training.txt")
-    file_train = open(Constants.dir_path + "sample\\training.part",'w')
-    file_valid = open(Constants.dir_path + "sample\\validation.part",'w')
-    file_test = open(Constants.dir_path + "sample\\test.part", 'w')
-    i = 0
-    for line in file_read:
-        # file_train.write(line)
-        if i % 100000 == 0 :
-            print i
-        if i < 1800000:
-            file_train.write(line)
-        elif i >= 1800000 and i < 2000000:
-            file_valid.write(line)
-        else:
-            file_test.write(line)
-        if i > 2200000 :    # 多了一行数据
-            file_read.close()
-            file_train.close()
-            file_valid.close()
-            file_test.close()
-            break
-        i = i + 1
-
+from Utils import file_len
+import constants
+from id_handler import *
+from ctr_handler import *
 
 def build_Y():
-    file_read = open(Constants.dir_path + "sample\\test.part")
-    file_Y = open(Constants.dir_path + "sample\\test.Y", 'w')
+    file_read = open(constants.dir_path + "sample\\test.part")
+    file_Y = open(constants.dir_path + "sample\\test.Y", 'w')
     for line in file_read:
         y = line[:1]
-        if int(y) > 0 : y = 1
+        if int(y) > 0: y = 1
         file_Y.write(str(y) + '\n')
     file_read.close()
     file_Y.close()
 
 
-def ctr_helper(idset, impre_set, click_set):
-    alpha = 0.05  # for smoothing
-    beta = 75
-    ctr_set = []
-    for i in range(6):
-        ids = idset[i]
-        ctrs = {}
-        for id in ids:
-            impression = float(impre_set[i].setdefault(id, 0))
-            click = float(click_set[i].setdefault(id, 0))
-            ctr = (click + alpha * beta) / (impression + beta)
-            ctrs[id] = round(ctr, 5)
-        ctr_set.append(ctrs)
-    print "Computing ctr finished."
-    return ctr_set[0], ctr_set[1], ctr_set[2], ctr_set[3], ctr_set[4], ctr_set[5]
-
-
-# CTR features [ad, advertiser, query, keyword, title, user]
-def build_ctr(idset):
-    impre_ad, impre_ader, impre_keyword, impre_user, impre_query, impre_title = {}, {}, {}, {}, {}, {}
-    click_ad, click_ader, click_keyword, click_user, click_query, click_title = {}, {}, {}, {}, {}, {}
-
-    stat_file = open(Constants.dir_path + "sample\\total.part",'r')
-    for line in stat_file:            # 迭代pandas太慢了，不要用
-        row = line.strip('\n').split('\t')
-        impre_ad[row[3]] = 1 + impre_ad.setdefault(row[3], 0)
-        impre_ader[row[4]] = 1 + impre_ader.setdefault(row[4], 0)
-        impre_query[row[7]] = 1 + impre_query.setdefault(row[7], 0)
-        impre_keyword[row[8]] = 1 + impre_keyword.setdefault(row[8], 0)
-        impre_title[row[9]] = 1 + impre_title.setdefault(row[9], 0)
-        impre_user[row[11]] = 1 + impre_user.setdefault(row[11], 0)
-
-        if int(row[0]) == 1:
-            click_ad[row[3]] = 1 + click_ad.setdefault(row[3], 0)
-            click_ader[row[4]] = 1 + click_ader.setdefault(row[4], 0)
-            click_query[row[7]] = 1 + click_query.setdefault(row[7], 0)
-            click_keyword[row[8]] = 1 + click_keyword.setdefault(row[8], 0)
-            click_title[row[9]] = 1 + click_title.setdefault(row[9], 0)
-            click_user[row[11]] = 1 + click_user.setdefault(row[11], 0)
-    print "Counting impression and click finished."
-    impre_set = [impre_ad, impre_ader, impre_keyword, impre_user, impre_query, impre_title]
-    click_set = [click_ad, click_ader, click_keyword, click_user, click_query, click_title]
-    return ctr_helper(idset, impre_set, click_set)
-
 # query-title, query-description, use start end to locate row of record
 def build_similarity_features(start):
-    simi_feature_file = open(Constants.dir_path + "sample\\mapping\\txtNormDistance_2.feature")
+    simi_feature_file = open(constants.dir_path + "sample\\mapping\\txtNormDistance_2.feature")
     query_title_simi = []
     query_desc_simi = []
     for line in simi_feature_file:
@@ -97,28 +29,6 @@ def build_similarity_features(start):
     print "similarity:" + query_title_simi[start], query_desc_simi[start]
     return query_title_simi[start:], query_desc_simi[start:]
 
-# 构造id类特征
-def build_id_features(stat):
-    adIDs = list2dict(stat[3].unique().tolist())
-    aderIDs = list2dict(stat[4].unique().tolist())
-    keywordIDs = list2dict(stat[8].unique().tolist())
-    userIDs = list2dict(stat[11].unique().tolist())
-
-    querydf = stat[7].value_counts()
-    querylist = []
-    for i, row in querydf.iteritems():
-        if (int(row) > 20):                 # 只选择频率超过20的, 剩下的记为unknown
-            querylist.append(i)
-    queryIDs = list2dict(querylist)
-
-    titledf = stat[9].value_counts()
-    titlelist = []
-    for i, row in titledf.iteritems():
-        if (int(row) > 20):                 # 只选择频率超过20的, 剩下的记为unknown
-            titlelist.append(i)
-    titleIDs = list2dict(titlelist)
-    print "Building id finished."
-    return adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs
 
 # 以coordinate稀疏矩阵存储
 def write_as_coor(features, file_write, row):
@@ -151,7 +61,7 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
     m = file_len(file_read.name)
     # file_write.write("%%MatrixMarket matrix coordinate integer general" + '\n' + "%" +'\n');  # mm sparse matrix
 
-    file_format = "libfm"
+    file_format = "coordinate"
     if file_format == "coordinate":
         file_write.write(str(m) + " " + str(n) + " " + str(m * 18) + '\n')  # row, column, number of values
 
@@ -237,7 +147,7 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
 
 def build_user_profile():
     # make user raw data
-    user_profile_file = open(Constants.dir_path + "userid_profile.txt")
+    user_profile_file = open(constants.dir_path + "userid_profile.txt")
     user_profile = [['0', '0']]
     for line in user_profile_file:
         fields = line.strip('\n').split('\t')
@@ -247,7 +157,7 @@ def build_user_profile():
 
 
 def build_x():
-    stat = pd.read_csv(Constants.dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
+    stat = pd.read_csv(constants.dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
     print "Reading file finished."
 
     adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = build_id_features(stat)
@@ -257,12 +167,12 @@ def build_x():
     user_profile = build_user_profile()
 
     # data file definition
-    train_from = open(Constants.dir_path + "sample\\training.part")
-    train_to = open(Constants.dir_path + "sample\\features\\training.gbdt.libfm", "w")
-    valid_from = open(Constants.dir_path + "sample\\validation.part")
-    valid_to = open(Constants.dir_path + "sample\\features\\validation.gbdt.libfm", "w")
-    test_from = open(Constants.dir_path + "sample\\test.part")
-    test_to = open(Constants.dir_path + "sample\\features\\test.gbdt.libfm", "w")
+    train_from = open(constants.dir_path + "sample\\training.part")
+    train_to = open(constants.dir_path + "sample\\features\\training.coor", "w")
+    valid_from = open(constants.dir_path + "sample\\validation.part")
+    valid_to = open(constants.dir_path + "sample\\features\\validation.coor", "w")
+    test_from = open(constants.dir_path + "sample\\test.part")
+    test_to = open(constants.dir_path + "sample\\features\\test.coor", "w")
 
     build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0)
     build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000)

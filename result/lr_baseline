@@ -48,3 +48,8 @@ score: 0.951955480445
 auc_test: 0.738622810815
 time: 0:06:24.152000
 
+ctr + similarity + norm + clean:
+score: 0.951670483295
+auc_test: 0.725063697663
+time: 0:02:55.403000
+
