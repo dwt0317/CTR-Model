@@ -1,4 +1,4 @@
-
+# -*- coding:utf-8 -*-
 import constants
 
 def ctr_helper(idset, impre_set, click_set):

@@ -53,3 +53,13 @@ score: 0.951670483295
 auc_test: 0.725063697663
 time: 0:02:55.403000
 
+sparse_id + cos + balanced:
+score: 0.788742112579
+auc_test: 0.715789547659
+time: 0:10:29.217000
+
+sparse_id + cos + discrete_sim:
+score: 0.951830481695
+auc_test: 0.726318451169
+time: 0:09:53.558000
+

@@ -18,15 +18,19 @@ def build_Y():
 
 
 # query-title, query-description, use start end to locate row of record
+# 将相似度特征拆为维度为10的离散特征
 def build_similarity_features(start):
-    simi_feature_file = open(constants.dir_path + "sample\\mapping\\txtNormDistance_2.feature")
+    simi_feature_file = open(constants.dir_path + "sample\\mapping\\txtCosDistance_clean.feature")
     query_title_simi = []
     query_desc_simi = []
     for line in simi_feature_file:
         tuple2 = line.strip('\n').split('\t')
-        query_title_simi.append(tuple2[0])
-        query_desc_simi.append(tuple2[1])
-    print "similarity:" + query_title_simi[start], query_desc_simi[start]
+        simi1 = float(tuple2[0])
+        simi2 = float(tuple2[1])
+        query_title_simi.append(int(abs(simi1-0.0001) * 10))
+        query_desc_simi.append(int(abs(simi2-0.0001) * 10))
+    print "start: " + str(start)
+    print "similarity:" + str(query_title_simi[start]), str(query_desc_simi[start])
     return query_title_simi[start:], query_desc_simi[start:]
 
 
@@ -45,7 +49,8 @@ def write_as_libfm(features, file_write, fields):
 
 
 # 以scipy稀疏矩阵形式存储, similarity_start标记相似度特征的起始位置
-def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similarity_start):
+def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similarity_start,
+                   has_id=True, file_format="coordinate"):
     adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4] \
         , idset[5]
     ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_set[0], ctr_set[1], ctr_set[2], ctr_set[3] \
@@ -53,17 +58,24 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
 
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start)
 
-    # position * 2, user * 2, CTR * 6, similarity * 2, id * (6(unknown) + lens)
-    # n = 2 + 2 + 6 + 2 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
-    n = 2 + 2 + 6 + 2 + 6
-    print n
+
+    # position * 2, user * 2, CTR * 6, similarity * 10, id * (6(unknown) + lens)
+    n = 0
+    values = 0
+    if has_id:
+        values = 12
+        n = 2 + 2 + 6 + 10 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
+    else:
+        values = 11
+        n = 2 + 2 + 6 + 10
+    print "dimension:" + str(n)
 
     m = file_len(file_read.name)
     # file_write.write("%%MatrixMarket matrix coordinate integer general" + '\n' + "%" +'\n');  # mm sparse matrix
 
-    file_format = "coordinate"
+
     if file_format == "coordinate":
-        file_write.write(str(m) + " " + str(n) + " " + str(m * 18) + '\n')  # row, column, number of values
+        file_write.write(str(m) + " " + str(n) + " " + str(m * values) + '\n')  # row, column, number of values
 
     row = 0
     for line in file_read:
@@ -86,47 +98,47 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
         features[8] = ctr_title.setdefault(fields[9], 0.05)
         features[9] = ctr_user.setdefault(fields[11], 0.05)
 
-        # similarity, query-title, query-description
-        features[10] = query_title_similarity[row]
-        features[11] = query_desc_similarity[row]
+        # similarity, query-title, query-description, 暂时丢弃description
+        features[10+query_title_similarity[row]] = 1
+        # features[20+query_desc_similarity[row]] = 1
 
-        if False:
+        if True:
             # ID [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]
             # ID类特征第一位留给unknown,所有整体后移一位
-            offset = 12
-            try:
+            offset = 20
+            if fields[3] in adIDs:
                 features[offset + adIDs[fields[3]] + 1] = 1     # 使用setdefault会改变矩阵的大小
-            except IndexError:                                  # 不要使用value.key in dict.keys()，这样会新建一个key的list,
+            else:                                 # 不要使用value.key in dict.keys()，这样会新建一个key的list,
                 features[offset] = 1                            # 可以用value.key in dict
             offset += (len(adIDs) + 1)
 
-            try:
+            if fields[4] in aderIDs:
                 features[offset + aderIDs[fields[4]] + 1] = 1
-            except KeyError:
+            else:
                 features[offset] = 1
             offset += (len(aderIDs) + 1)
 
-            try:
+            if fields[7] in queryIDs:
                 features[offset + queryIDs[fields[7]] + 1] = 1
-            except KeyError:
+            else:
                 features[offset] = 1
             offset += (len(queryIDs) + 1)
 
-            try:
+            if fields[8] in keywordIDs:
                 features[offset + keywordIDs[fields[8]] + 1] = 1
-            except KeyError:
+            else:
                 features[offset] = 1
             offset += (len(keywordIDs) + 1)
 
-            try:
+            if fields[9] in titleIDs:
                 features[offset + titleIDs[fields[9]] + 1] = 1
-            except KeyError:
+            else:
                 features[offset] = 1
             offset += (len(titleIDs) + 1)
 
-            try:
+            if fields[11] in userIDs:
                 features[offset + userIDs[fields[11]] + 1] = 1
-            except KeyError:
+            else:
                 features[offset] = 1
 
         if int(fields[0]) > 0:
@@ -138,7 +150,7 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
             write_as_libfm(features, file_write, fields)
 
         if row % 500000 == 0:
-            print row
+            print "rows: " + str(row)
         row += 1
         del features
     file_read.close()
@@ -168,11 +180,11 @@ def build_x():
 
     # data file definition
     train_from = open(constants.dir_path + "sample\\training.part")
-    train_to = open(constants.dir_path + "sample\\features\\training.coor", "w")
+    train_to = open(constants.dir_path + "sample\\features\\training.sparse_id.coor", "w")
     valid_from = open(constants.dir_path + "sample\\validation.part")
-    valid_to = open(constants.dir_path + "sample\\features\\validation.coor", "w")
+    valid_to = open(constants.dir_path + "sample\\features\\validation.sparse_id.coor", "w")
     test_from = open(constants.dir_path + "sample\\test.part")
-    test_to = open(constants.dir_path + "sample\\features\\test.coor", "w")
+    test_to = open(constants.dir_path + "sample\\features\\test.sparse_id.coor", "w")
 
     build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0)
     build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000)

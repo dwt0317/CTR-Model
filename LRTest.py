@@ -8,9 +8,9 @@ from scipy import sparse
 import datetime
 import constants
 
-training_X_file = constants.dir_path + "sample\\features\\training.coor"
+training_X_file = constants.dir_path + "sample\\features\\training.sparse_id.coor"
 training_Y_file = constants.dir_path + "sample\\training.Y"
-test_X_file = constants.dir_path + "sample\\features\\test.coor"
+test_X_file = constants.dir_path + "sample\\features\\test.sparse_id.coor"
 test_Y_file = constants.dir_path + "sample\\test.Y"
 
 
@@ -45,7 +45,7 @@ def lr():
     test_y = np.loadtxt(open(test_Y_file), dtype=int)
 
     print "Loading data completed."
-    classifier = LogisticRegression(n_jobs=2, class_weight='balanced')
+    classifier = LogisticRegression(n_jobs=2)
     if grid:
         param_grid = {'C': [1, 5, 10]}
         grid = GridSearchCV(estimator=classifier, scoring='roc_auc', param_grid=param_grid)
@@ -71,7 +71,7 @@ def lr():
 
         end = datetime.datetime.now()
         log_file = open("result/lr_baseline", "a")
-        log_file.write("ctr + similarity + norm + clean + balanced:" + '\n')
+        log_file.write("sparse_id + cos + discrete_sim:" + '\n')
         log_file.write("score: " + str(score) + '\n')
         log_file.write("auc_test: " + str(auc_test) + '\n')
         log_file.write("time: " + str(end - begin) + '\n' + '\n')
