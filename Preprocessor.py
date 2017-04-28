@@ -3,8 +3,9 @@
 import pandas as pd
 from Utils import file_len
 import constants
-from id_handler import *
-from ctr_handler import *
+from id_handler import build_id_features
+from ctr_handler import build_ctr
+from gbdt_handler import build_gbdt
 
 def build_Y():
     file_read = open(constants.dir_path + "sample\\test.part")
@@ -50,7 +51,7 @@ def write_as_libfm(features, file_write, fields):
 
 # 以scipy稀疏矩阵形式存储, similarity_start标记相似度特征的起始位置
 def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similarity_start,
-                   has_id=True, file_format="coordinate"):
+                   has_id=True, file_format="coordinate", dataset="train"):
     adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4] \
         , idset[5]
     ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_set[0], ctr_set[1], ctr_set[2], ctr_set[3] \
@@ -59,15 +60,15 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start)
 
 
-    # position * 2, user * 2, CTR * 6, similarity * 10, id * (6(unknown) + lens)
+    # position * 2, user * 2, CTR * 6, similarity * (1*10), GBDT * 400, id * (6(unknown) + lens)
     n = 0
     values = 0
     if has_id:
-        values = 12
-        n = 2 + 2 + 6 + 10 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
+        values = 17 + 30
+        n = 2 + 2 + 6 + 10 + 600 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
     else:
-        values = 11
-        n = 2 + 2 + 6 + 10
+        values = 11 + 30
+        n = 2 + 2 + 6 + 10 + 600
     print "dimension:" + str(n)
 
     m = file_len(file_read.name)
@@ -77,6 +78,8 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
     if file_format == "coordinate":
         file_write.write(str(m) + " " + str(n) + " " + str(m * values) + '\n')  # row, column, number of values
 
+    gbdt_feature = build_gbdt(dataset)
+    print "Building gbdt features finished"
     row = 0
     for line in file_read:
         features = {}
@@ -102,10 +105,15 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
         features[10+query_title_similarity[row]] = 1
         # features[20+query_desc_similarity[row]] = 1
 
-        if True:
+        offset = 20
+
+        for k in gbdt_feature[row]:
+            features[k+offset] = 1
+
+        offset += 600
+        if has_id:
             # ID [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]
             # ID类特征第一位留给unknown,所有整体后移一位
-            offset = 20
             if fields[3] in adIDs:
                 features[offset + adIDs[fields[3]] + 1] = 1     # 使用setdefault会改变矩阵的大小
             else:                                 # 不要使用value.key in dict.keys()，这样会新建一个key的list,
@@ -180,15 +188,15 @@ def build_x():
 
     # data file definition
     train_from = open(constants.dir_path + "sample\\training.part")
-    train_to = open(constants.dir_path + "sample\\features\\training.sparse_id.coor", "w")
-    valid_from = open(constants.dir_path + "sample\\validation.part")
-    valid_to = open(constants.dir_path + "sample\\features\\validation.sparse_id.coor", "w")
+    train_to = open(constants.dir_path + "sample\\features\\training.gbdt_no_id.coor", "w")
+    # valid_from = open(constants.dir_path + "sample\\validation.part")
+    # valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt.coor", "w")
     test_from = open(constants.dir_path + "sample\\test.part")
-    test_to = open(constants.dir_path + "sample\\features\\test.sparse_id.coor", "w")
+    test_to = open(constants.dir_path + "sample\\features\\test.gbdt_no_id.coor", "w")
 
-    build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0)
-    build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000)
-    build_x_helper(idset, ctr_set, user_profile, test_from, test_to, 2000000)
+    build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0, has_id=False, file_format="coordinate", dataset="train")
+    # build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000, has_id=False, file_format="coordinate")
+    build_x_helper(idset, ctr_set, user_profile, test_from, test_to, 2000000, has_id=False, file_format="coordinate", dataset="test")
 
 
 

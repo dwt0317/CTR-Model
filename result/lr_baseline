@@ -63,3 +63,23 @@ score: 0.951830481695
 auc_test: 0.726318451169
 time: 0:09:53.558000
 
+no_id + cos + discrete_sim:
+score: 0.951675483245
+auc_test: 0.714867411616
+time: 0:02:39.524000
+
+sparse_id + cos + discrete_sim + gbdt: (Bug)
+score: 0.912255877441
+auc_test: 0.476380330269
+time: 0:22:27.049000
+
+no_id + cos + discrete_sim + gbdt: (Bug)
+score: 0.948705512945
+auc_test: 0.501958146184
+time: 0:08:42.106000
+
+sparse_id + cos + discrete_sim + gbdt:
+score: 0.952160478395
+auc_test: 0.788667186214
+time: 0:14:59.699000
+
