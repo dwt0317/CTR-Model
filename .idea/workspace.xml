@@ -2,10 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="333216e1-6d66-4496-a74b-db77d72e751f" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/m_fm/FMTest.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/model/m_xgboost/gbdt_feature.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/kdd.iml" afterPath="$PROJECT_DIR$/.idea/kdd.iml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/LRTest.py" afterPath="$PROJECT_DIR$/LRTest.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Preprocessor.py" afterPath="$PROJECT_DIR$/Preprocessor.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/result/lr_baseline" afterPath="$PROJECT_DIR$/result/lr_baseline" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/LRTest.py" afterPath="$PROJECT_DIR$/model/m_lr/LRTest.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/Preprocessor.py" afterPath="$PROJECT_DIR$/preprocessor/Preprocessor.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/ctr_handler.py" afterPath="$PROJECT_DIR$/preprocessor/ctr_handler.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/gbdt_handler.py" afterPath="$PROJECT_DIR$/preprocessor/gbdt_handler.py" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/id_handler.py" afterPath="$PROJECT_DIR$/preprocessor/id_handler.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,10 +31,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="Preprocessor.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+        <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4660">
-              <caret line="234" column="0" selection-start-line="234" selection-start-column="0" selection-end-line="234" selection-end-column="0" />
+            <state relative-caret-position="1180">
+              <caret line="64" column="14" lean-forward="false" selection-start-line="64" selection-start-column="14" selection-end-line="64" selection-end-column="14" />
               <folding>
                 <element signature="e#24#43#0" expanded="true" />
               </folding>
@@ -35,21 +42,77 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="Utils.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Utils.py">
+      <file leaf-file-name="gbdt_handler.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/preprocessor/gbdt_handler.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="60">
-              <caret line="3" column="4" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
+            <state relative-caret-position="340">
+              <caret line="18" column="22" lean-forward="false" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
+              <folding>
+                <element signature="e#0#16#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="id_handler.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/preprocessor/id_handler.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1420">
+              <caret line="74" column="37" lean-forward="false" selection-start-line="74" selection-start-column="37" selection-end-line="74" selection-end-column="37" />
+              <folding>
+                <element signature="e#23#50#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="lr_baseline" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/result/lr_baseline">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="420">
+              <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="gbdt_feature.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/model/m_xgboost/gbdt_feature.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="700">
+              <caret line="35" column="65" lean-forward="true" selection-start-line="35" selection-start-column="65" selection-end-line="35" selection-end-column="65" />
+              <folding>
+                <element signature="e#15#33#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sample.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sample.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="100">
+              <caret line="5" column="29" lean-forward="false" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="logistic.py" pinned="false" current-in-tab="false">
+        <entry file="file://D:/Development/Python27/Lib/site-packages/sklearn/linear_model/logistic.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="19840">
+              <caret line="1016" column="12" lean-forward="false" selection-start-line="1016" selection-start-column="4" selection-end-line="1016" selection-end-column="12" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
       <file leaf-file-name="LRTest.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/LRTest.py">
+        <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1360">
-              <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+            <state relative-caret-position="140">
+              <caret line="13" column="51" lean-forward="true" selection-start-line="13" selection-start-column="51" selection-end-line="13" selection-end-column="51" />
               <folding>
                 <element signature="e#24#75#0" expanded="true" />
               </folding>
@@ -57,21 +120,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="logistic.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/linear_model/logistic.py">
+      <file leaf-file-name="README.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="19100">
-              <caret line="979" column="27" selection-start-line="979" selection-start-column="27" selection-end-line="979" selection-end-column="27" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="lr_baseline" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/result/lr_baseline">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="26" column="32" selection-start-line="26" selection-start-column="32" selection-end-line="26" selection-end-column="32" />
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -86,34 +139,64 @@
       </list>
     </option>
   </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>embedding</find>
+      <find>cv</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>features</replace>
+    </replaceStrings>
+  </component>
   <component name="Git.Settings">
+    <option name="ROOT_SYNC" value="DONT_SYNC" />
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/Utils.py" />
-        <option value="$PROJECT_DIR$/Preprocessor.py" />
+        <option value="$PROJECT_DIR$/Constants.py" />
+        <option value="$PROJECT_DIR$/Sample.py" />
+        <option value="$PROJECT_DIR$/ID_Handler.py" />
+        <option value="$PROJECT_DIR$/CTR_Handler.py" />
+        <option value="$PROJECT_DIR$/ctr_handler.py" />
+        <option value="$PROJECT_DIR$/sample.py" />
+        <option value="$PROJECT_DIR$/id_handler.py" />
+        <option value="$PROJECT_DIR$/result/gbdt_handler.py" />
         <option value="$PROJECT_DIR$/LRTest.py" />
+        <option value="$PROJECT_DIR$/gbdt_handler.py" />
+        <option value="$PROJECT_DIR$/Preprocessor.py" />
         <option value="$PROJECT_DIR$/result/lr_baseline" />
+        <option value="$PROJECT_DIR$/model/m_xgboost/gbdt_feature.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-9" />
-    <option name="y" value="-9" />
-    <option name="width" value="1938" />
-    <option name="height" value="1048" />
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1936" />
+    <option name="height" value="1056" />
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
-    <OptionsSetting value="true" id="Add" />
-    <OptionsSetting value="true" id="Remove" />
-    <OptionsSetting value="true" id="Checkout" />
-    <OptionsSetting value="true" id="Update" />
-    <OptionsSetting value="true" id="Status" />
-    <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
-    <ConfirmationsSetting value="0" id="Remove" />
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+          <State>
+            <id>General</id>
+          </State>
+          <State>
+            <id>Python</id>
+          </State>
+          <State>
+            <id>ReST</id>
+          </State>
+        </expanded-state>
+      </profile-state>
+    </entry>
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -130,8 +213,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -139,28 +222,8 @@
               <option name="myItemId" value="kdd" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
-          </PATH>
-          <PATH>
             <PATH_ELEMENT>
               <option name="myItemId" value="kdd" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="kdd" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="kdd" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="kdd" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="result" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -169,9 +232,20 @@
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../gbdt" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Workspaces\SAD\kdd\model\m_fm" />
+      <recent name="D:\Workspaces\SAD\kdd\model" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Workspaces\SAD\kdd\model\m_lr" />
+      <recent name="D:\Workspaces\SAD\kdd\preprocessor" />
+      <recent name="D:\Workspaces\SAD\kdd" />
+      <recent name="D:\Workspaces\SAD\kdd\model" />
+    </key>
   </component>
   <component name="RunManager" selected="Python.LRTest">
     <configuration default="false" name="Preprocessor" type="PythonConfigurationType" factoryName="Python" temporary="true">
@@ -186,7 +260,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="kdd" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Preprocessor.py" />
+      <option name="SCRIPT_NAME" value="D:\Workspaces\SAD\kdd\preprocessor\Preprocessor.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -203,7 +277,41 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="kdd" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/LRTest.py" />
+      <option name="SCRIPT_NAME" value="D:\Workspaces\SAD\kdd\model\m_lr\LRTest.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="id_handler" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="kdd" />
+      <option name="SCRIPT_NAME" value="D:\Workspaces\SAD\kdd\preprocessor\id_handler.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="gbdt_handler" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="kdd" />
+      <option name="SCRIPT_NAME" value="D:\Workspaces\SAD\kdd\preprocessor\gbdt_handler.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <method />
@@ -342,14 +450,18 @@
       <option name="USE_KEYWORD" value="false" />
       <method />
     </configuration>
-    <list size="2">
+    <list size="4">
       <item index="0" class="java.lang.String" itemvalue="Python.Preprocessor" />
       <item index="1" class="java.lang.String" itemvalue="Python.LRTest" />
+      <item index="2" class="java.lang.String" itemvalue="Python.id_handler" />
+      <item index="3" class="java.lang.String" itemvalue="Python.gbdt_handler" />
     </list>
     <recent_temporary>
-      <list size="2">
+      <list size="4">
         <item index="0" class="java.lang.String" itemvalue="Python.LRTest" />
         <item index="1" class="java.lang.String" itemvalue="Python.Preprocessor" />
+        <item index="2" class="java.lang.String" itemvalue="Python.gbdt_handler" />
+        <item index="3" class="java.lang.String" itemvalue="Python.id_handler" />
       </list>
     </recent_temporary>
   </component>
@@ -364,30 +476,92 @@
       <option name="presentableId" value="Default" />
       <updated>1484555314139</updated>
     </task>
+    <task id="LOCAL-00001" summary="修改了路径到另一个文件">
+      <created>1491917742863</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1491917742863</updated>
+    </task>
+    <task id="LOCAL-00002" summary="参数调整">
+      <created>1492765235734</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1492765235734</updated>
+    </task>
+    <task id="LOCAL-00003" summary="将两种形式的特征写入函数分开">
+      <created>1492920257000</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1492920257000</updated>
+    </task>
+    <task id="LOCAL-00004" summary="重构了一下">
+      <created>1493024697845</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1493024697845</updated>
+    </task>
+    <task id="LOCAL-00005" summary="similarity打成了离散值；只保留了10%的id特征；进行了重构">
+      <created>1493041628494</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1493041628494</updated>
+    </task>
+    <task id="LOCAL-00006" summary="加入了gbdt生成的特征，AUC提高显著。">
+      <created>1493370295691</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1493370295691</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="0" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19017433" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14541623" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27066818" sideWeight="0.50184894" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32934782" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973656" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27066818" sideWeight="0.4981511" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22391304" sideWeight="0.4981511" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295583" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.27066818" sideWeight="0.50184894" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22391304" sideWeight="0.4981511" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14541623" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3295583" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24973656" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -400,416 +574,339 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="修改了路径到另一个文件" />
+    <MESSAGE value="参数调整" />
+    <MESSAGE value="将两种形式的特征写入函数分开" />
+    <MESSAGE value="重构了一下" />
+    <MESSAGE value="similarity打成了离散值；只保留了10%的id特征；进行了重构" />
+    <MESSAGE value="加入了gbdt生成的特征，AUC提高显著。" />
+    <option name="LAST_COMMIT_MESSAGE" value="加入了gbdt生成的特征，AUC提高显著。" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="8" />
+      <option name="time" value="10" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.mtx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://G:/Exchange/searchAD/grad_project/code/wangtao/CTR.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1300">
-          <caret line="81" column="0" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="94" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="880">
-          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="11" column="18" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.mtx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="1" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://G:/Exchange/searchAD/grad_project/code/wangtao/CTR.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1300">
-          <caret line="81" column="0" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="94" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="11" column="18" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="20" column="16" selection-start-line="20" selection-start-column="16" selection-end-line="20" selection-end-column="16" />
-          <folding>
-            <element signature="e#24#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.mtx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://G:/Exchange/searchAD/grad_project/code/wangtao/CTR.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1000">
-          <caret line="66" column="31" selection-start-line="66" selection-start-column="20" selection-end-line="66" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1760">
-          <caret line="88" column="0" selection-start-line="88" selection-start-column="0" selection-end-line="88" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#43#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#75#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1577">
-          <caret line="83" column="57" selection-start-line="83" selection-start-column="57" selection-end-line="83" selection-end-column="57" />
+          <caret line="83" column="57" lean-forward="false" selection-start-line="83" selection-start-column="57" selection-end-line="83" selection-end-column="57" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
+    <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#75#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
+    <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
           <folding>
             <element signature="e#24#75#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
+    <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
           <folding>
             <element signature="e#24#75#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
+    <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
           <folding>
             <element signature="e#24#75#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
+    <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
           <folding>
             <element signature="e#24#75#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
+    <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="80">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
+          <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="7" selection-end-column="80" />
           <folding>
             <element signature="e#24#75#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://D:/Software/Developlment_Tools/python/pyFM-master/setup.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://D:/Software/Developlment_Tools/python/pyFM-master/setup.py" />
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/python-skeletons/__builtin__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="283">
-          <caret line="2681" column="8" selection-start-line="2681" selection-start-column="8" selection-end-line="2681" selection-end-column="8" />
+          <caret line="2681" column="8" lean-forward="false" selection-start-line="2681" selection-start-column="8" selection-end-line="2681" selection-end-column="8" />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Development/python27/Lib/site-packages/pandas/core/base.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="264">
-          <caret line="920" column="8" selection-start-line="920" selection-start-column="8" selection-end-line="920" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Development/python27/Lib/site-packages/pandas/core/groupby.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="27800">
-          <caret line="1448" column="8" selection-start-line="1448" selection-start-column="8" selection-end-line="1448" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/Development/python27/Lib/site-packages/pandas/core/base.py" />
+    <entry file="file://C:/Development/python27/Lib/site-packages/pandas/core/groupby.py" />
     <entry file="file://$PROJECT_DIR$/ctr_list" />
-    <entry file="file://C:/Development/python27/Lib/site-packages/scipy/io/mmio.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="59" column="4" selection-start-line="59" selection-start-column="4" selection-end-line="59" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/Development/python27/Lib/site-packages/scipy/io/mmio.py" />
     <entry file="file://$PROJECT_DIR$/test_csr.npz" />
     <entry file="file://$PROJECT_DIR$/test_csr.npy" />
     <entry file="file://$PROJECT_DIR$/savemat.mat" />
-    <entry file="file://G:/Exchange/searchAD/grad_project/code/wangtao/CTR.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-180">
-          <caret line="119" column="20" selection-start-line="119" selection-start-column="20" selection-end-line="119" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/model_selection/_validation.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="524">
-          <caret line="120" column="0" selection-start-line="120" selection-start-column="0" selection-end-line="120" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/externals/joblib/numpy_pickle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="528" column="4" selection-start-line="528" selection-start-column="4" selection-end-line="528" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/test.mtx">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="2" selection-start-line="0" selection-start-column="2" selection-end-line="0" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm2016.2/system/python_stubs/-1072417790/__builtin__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="204">
-          <caret line="509" column="4" selection-start-line="509" selection-start-column="4" selection-end-line="509" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Development/python27/Lib/timeit.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3980">
-          <caret line="201" column="0" selection-start-line="201" selection-start-column="0" selection-end-line="201" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Development/python27/Lib/site-packages/numpy/lib/npyio.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="13740">
-          <caret line="709" column="19" selection-start-line="709" selection-start-column="19" selection-end-line="709" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/metrics/classification.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1840">
-          <caret line="111" column="4" selection-start-line="111" selection-start-column="4" selection-end-line="111" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://G:/Exchange/searchAD/grad_project/code/wangtao/CTR.py" />
+    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/model_selection/_validation.py" />
+    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/externals/joblib/numpy_pickle.py" />
+    <entry file="file://$PROJECT_DIR$/test.mtx" />
+    <entry file="file://$USER_HOME$/.PyCharm2016.2/system/python_stubs/-1072417790/__builtin__.py" />
+    <entry file="file://C:/Development/python27/Lib/timeit.py" />
+    <entry file="file://C:/Development/python27/Lib/site-packages/numpy/lib/npyio.py" />
+    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/metrics/classification.py" />
     <entry file="file://$PROJECT_DIR$/Utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="60">
-          <caret line="3" column="4" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
+          <caret line="3" column="4" lean-forward="false" selection-start-line="3" selection-start-column="4" selection-end-line="3" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/linear_model/logistic.py" />
+    <entry file="file://$PROJECT_DIR$/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="48" lean-forward="false" selection-start-line="0" selection-start-column="48" selection-end-line="0" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Development/Python27/Lib/site-packages/sklearn/utils/validation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9080">
+          <caret line="465" column="18" lean-forward="false" selection-start-line="465" selection-start-column="18" selection-end-line="465" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Development/Python27/Lib/site-packages/sklearn/model_selection/_search.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1876">
+          <caret line="719" column="18" lean-forward="true" selection-start-line="719" selection-start-column="18" selection-end-line="719" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Development/Python27/Lib/site-packages/pandas/core/frame.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10980">
+          <caret line="636" column="8" lean-forward="false" selection-start-line="636" selection-start-column="8" selection-end-line="636" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/Development/python27/Lib/site-packages/sklearn/linear_model/logistic.py">
+    <entry file="file://D:/Development/Python27/Lib/site-packages/pandas/io/parsers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="19100">
-          <caret line="979" column="27" selection-start-line="979" selection-start-column="27" selection-end-line="979" selection-end-column="27" />
+        <state relative-caret-position="850">
+          <caret line="652" column="0" lean-forward="false" selection-start-line="652" selection-start-column="0" selection-end-line="652" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/preprocessor/ctr_handler.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="17" column="35" lean-forward="false" selection-start-line="17" selection-start-column="35" selection-end-line="17" selection-end-column="35" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Preprocessor.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/id_handler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4660">
-          <caret line="234" column="0" selection-start-line="234" selection-start-column="0" selection-end-line="234" selection-end-column="0" />
+        <state relative-caret-position="1420">
+          <caret line="74" column="37" lean-forward="false" selection-start-line="74" selection-start-column="37" selection-end-line="74" selection-end-column="37" />
           <folding>
-            <element signature="e#24#43#0" expanded="true" />
+            <element signature="e#23#50#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/LRTest.py">
+    <entry file="file://$PROJECT_DIR$/preprocessor/gbdt_handler.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1360">
-          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
+        <state relative-caret-position="340">
+          <caret line="18" column="22" lean-forward="false" selection-start-line="18" selection-start-column="22" selection-end-line="18" selection-end-column="22" />
           <folding>
-            <element signature="e#24#75#0" expanded="true" />
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/preprocessor/Preprocessor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1180">
+          <caret line="64" column="14" lean-forward="false" selection-start-line="64" selection-start-column="14" selection-end-line="64" selection-end-column="14" />
+          <folding>
+            <element signature="e#24#43#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/result/lr_baseline">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="26" column="32" selection-start-line="26" selection-start-column="32" selection-end-line="26" selection-end-column="32" />
+        <state relative-caret-position="420">
+          <caret line="21" column="0" lean-forward="true" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sample.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="5" column="29" lean-forward="false" selection-start-line="5" selection-start-column="29" selection-end-line="5" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Development/Python27/Lib/site-packages/sklearn/linear_model/logistic.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="19840">
+          <caret line="1016" column="12" lean-forward="false" selection-start-line="1016" selection-start-column="4" selection-end-line="1016" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/m_lr/LRTest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="140">
+          <caret line="13" column="51" lean-forward="true" selection-start-line="13" selection-start-column="51" selection-end-line="13" selection-end-column="51" />
+          <folding>
+            <element signature="e#24#75#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/preprocessor/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/m_xgboost/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/m_xgboost/gbdt_feature.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="700">
+          <caret line="35" column="65" lean-forward="true" selection-start-line="35" selection-start-column="65" selection-end-line="35" selection-end-column="65" />
+          <folding>
+            <element signature="e#15#33#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model/m_fm/tmp/tmpcrvvua">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>

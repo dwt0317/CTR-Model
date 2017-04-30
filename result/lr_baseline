@@ -83,3 +83,16 @@ score: 0.952160478395
 auc_test: 0.788667186214
 time: 0:14:59.699000
 
+GBDT:
+params = {"objective": 'binary:logistic',
+              "booster": "gbtree",
+              'eval_metric': 'error',
+              "eta": 0.1,
+              "max_depth": 3,
+              'min_child_weight': 1,
+              'subsample': 0.8,
+              'early_stopping_rounds': 10,,
+              'max_leaf_nodes': 20
+          }
+auc: 0.769600011151
+
