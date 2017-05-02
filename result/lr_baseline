@@ -96,3 +96,7 @@ params = {"objective": 'binary:logistic',
           }
 auc: 0.769600011151
 
+fm + 620 dimensions + 100 iters:
+auc_test: 0.788769928022
+time: 0:26:42.623000
+

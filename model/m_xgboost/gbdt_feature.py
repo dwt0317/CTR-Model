@@ -1,4 +1,4 @@
-#coding:utf-8
+# -*- coding:utf-8 -*-
 
 import numpy as np
 from sklearn import metrics   #Additional scklearn functions
@@ -8,8 +8,7 @@ from xgboost.sklearn import XGBClassifier
 import cPickle as pickle
 import constants
 import xgboost as xgb
-import pandas as pd
-from pandas import DataFrame
+import os
 
 # tp, fn, fp, tn
 def get_metric(test_y, train_pred):
@@ -36,8 +35,9 @@ def train_model():
     train_y = np.loadtxt(constants.dir_path + "sample\\training.Y", dtype=int)
     test_x = constants.dir_path + "sample\\features\\test.gbdt.libfm"
     test_y = np.loadtxt(constants.dir_path + "sample\\test.Y", dtype=int)
+    validation_x = constants.dir_path + "sample\\features\\validation.gbdt.libfm"
 
-
+    # svmlight格式自带label
     train_data = load_svmlight_file(train_x)
 
     rounds = 30
@@ -80,11 +80,12 @@ def train_model():
         print train_pred
         auc_test = metrics.roc_auc_score(test_y, train_pred)
         print auc_test
-        test_ind = xgb_model.predict(xgb.DMatrix(test_x), ntree_limit=xgb_model.best_ntree_limit, pred_leaf=True)
-        train_ind = xgb_model.predict(xgb.DMatrix(train_x), ntree_limit=xgb_model.best_ntree_limit, pred_leaf=True)
-        pickle.dump(test_ind, open(constants.dir_path + "sample\\features\\gbdt_features\\test_2.idx", "wb"))
-        pickle.dump(train_ind, open(constants.dir_path + "sample\\features\\gbdt_features\\training_2.idx", "wb"))
-        print test_ind.shape, train_ind.shape
+        pickle.dump(xgb_model, open(os.getcwd()+"/gbdt_model", "wb"))
+        print "dump model finished"
+        # test_ind = xgb_model.predict(xgb.DMatrix(test_x), ntree_limit=xgb_model.best_ntree_limit, pred_leaf=True)
+        # train_ind = xgb_model.predict(xgb.DMatrix(train_x), ntree_limit=xgb_model.best_ntree_limit, pred_leaf=True)
+        validation_ind = xgb_model.predict(xgb.DMatrix(validation_x), ntree_limit=xgb_model.best_ntree_limit, pred_leaf=True)
+        pickle.dump(validation_ind, open(constants.dir_path + "sample\\features\\gbdt_features\\validation.idx", "wb"))
 
 
 
@@ -92,7 +93,7 @@ def onehot_feature():
     print "load_data"
     onehot = []
     print "transform"
-    gbdt_feature = pickle.load(open(constants.dir_path + "sample\\features\\gbdt_features\\training_2.idx", "rb"))
+    gbdt_feature = pickle.load(open(constants.dir_path + "sample\\features\\gbdt_features\\validation.idx", "rb"))
 
     for line in gbdt_feature:
         temp_onehot = []
@@ -102,7 +103,7 @@ def onehot_feature():
             i += 1
         onehot.append(temp_onehot)
 
-    pickle.dump(onehot, open(constants.dir_path + "sample\\features\\gbdt_features\\train.onehot.dict", "wb"))
+    pickle.dump(onehot, open(constants.dir_path + "sample\\features\\gbdt_features\\validation.onehot.dict", "wb"))
 
 
 def test_read():
@@ -111,6 +112,6 @@ def test_read():
         print gbdt_feature[i]
 
 if __name__ == '__main__':
-    # train_model()
+    train_model()
     onehot_feature()
 

@@ -4,44 +4,25 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
 import numpy as np
 from sklearn.model_selection import GridSearchCV
-from scipy import sparse
 import datetime
 import constants
+from Utils import read_coordinate_mtx
 
-training_X_file = constants.dir_path + "sample\\features\\training.gbdt_no_id.coor"
+training_X_file = constants.dir_path + "sample\\features\\train.gbdt_no_id.coor"
 training_Y_file = constants.dir_path + "sample\\training.Y"
 test_X_file = constants.dir_path + "sample\\features\\test.gbdt_no_id.coor"
 test_Y_file = constants.dir_path + "sample\\test.Y"
 
 
-# read coo format matrix from file
-def readcoo(filename):
-    training = open(filename, "r")
-    fields = training.readline().strip('\n').split(' ')
-    rows = int(fields[0])
-    columns = int(fields[1])
-    values = int(fields[2])
-    print rows, columns, values
-    b = sparse.lil_matrix((rows, columns), dtype=float)
-    i = 0
-    for line in training:
-        field = line.strip('\n').split(' ')
-        row = field[0]
-        column = field[1]
-        value = field[2]
-        b[int(row), int(column)] = float(value)
-        if i % 1000000 == 0:
-            print i
-        i += 1
-    return b
+
 
 
 def lr():
     begin = datetime.datetime.now()
     grid = False
-    training_x = readcoo(training_X_file)
-    training_y = np.loadtxt(open(training_Y_file), dtype=int)
-    test_x = readcoo(test_X_file)
+    train_x = read_coordinate_mtx(training_X_file)
+    train_y = np.loadtxt(open(training_Y_file), dtype=int)
+    test_x = read_coordinate_mtx(test_X_file)
     test_y = np.loadtxt(open(test_Y_file), dtype=int)
 
     print "Loading data completed."
@@ -49,13 +30,13 @@ def lr():
     if grid:
         param_grid = {'C': [1, 5, 10]}
         grid = GridSearchCV(estimator=classifier, scoring='roc_auc', param_grid=param_grid)
-        grid.fit(training_x, training_y)
+        grid.fit(train_x, train_y)
         print "Training completed."
         print grid.cv_results_
         print grid.best_estimator_
 
     if not grid:
-        classifier.fit(training_x, training_y)
+        classifier.fit(train_x, train_y)
         # cross_val_score(classifier, training_x, training_y, cv=10)
         # print "Cross validation completed."
         # joblib.dump(classifier, "train_model_norm_clean" + ".pkl", compress=3)      #加个3，是压缩，一般用这个

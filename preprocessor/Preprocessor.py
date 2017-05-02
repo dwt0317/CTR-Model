@@ -6,6 +6,7 @@ import constants
 from id_handler import build_id_features
 from ctr_handler import build_ctr
 from gbdt_handler import build_gbdt
+import io
 
 def build_Y():
     file_read = open(constants.dir_path + "sample\\test.part")
@@ -43,10 +44,10 @@ def write_as_coor(features, file_write, row):
 
 # 以libfm形式存储
 def write_as_libfm(features, file_write, fields):
-    file_write.write(fields[0]+' ')   # write y  libfm
+    file_write.write(unicode(fields[0]+' '))   # write y  libfm
     for col in features.keys():  # row and column of matrix market start from 1, coo matrix start from 0
-        file_write.write(str(col) + ":" + str(features[col]) + ' ')
-    file_write.write('\n')
+        file_write.write(unicode(str(col) + ":" + str(features[col]) + ' '))
+    file_write.write(unicode('\n'))
 
 
 # 以scipy稀疏矩阵形式存储, similarity_start标记相似度特征的起始位置
@@ -186,17 +187,17 @@ def build_x():
     ctr_set = [ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user]
     user_profile = build_user_profile()
 
-    # data file definition
+    # data file definition, newline is necessary when write as libfm format
     train_from = open(constants.dir_path + "sample\\training.part")
-    train_to = open(constants.dir_path + "sample\\features\\training.gbdt_no_id.coor", "w")
+    train_to = io.open(constants.dir_path + "sample\\features\\train.gbdt_no_id.libfm", "w", newline='\n')
     # valid_from = open(constants.dir_path + "sample\\validation.part")
-    # valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt.coor", "w")
-    test_from = open(constants.dir_path + "sample\\test.part")
-    test_to = open(constants.dir_path + "sample\\features\\test.gbdt_no_id.coor", "w")
+    # valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt_no_id.libfm", "w", newline='\n')
+    # test_from = open(constants.dir_path + "sample\\test.part")
+    # test_to = open(constants.dir_path + "sample\\features\\test.gbdt_no_id.libfm", "w", newline='\n')
 
-    build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0, has_id=False, file_format="coordinate", dataset="train")
-    # build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000, has_id=False, file_format="coordinate")
-    build_x_helper(idset, ctr_set, user_profile, test_from, test_to, 2000000, has_id=False, file_format="coordinate", dataset="test")
+    build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0, has_id=False, file_format="libfm", dataset="train")
+    # build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000, has_id=False, file_format="libfm", dataset="validation")
+    # build_x_helper(idset, ctr_set, user_profile, test_from, test_to, 2000000, has_id=False, file_format="libfm", dataset="test")
 
 
 
