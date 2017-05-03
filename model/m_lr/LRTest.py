@@ -6,27 +6,25 @@ import numpy as np
 from sklearn.model_selection import GridSearchCV
 import datetime
 import constants
-from Utils import read_coordinate_mtx
+from Utils import read_coo_mtx
 
-training_X_file = constants.dir_path + "sample\\features\\train.gbdt_no_id.coor"
+training_X_file = constants.dir_path + "sample\\features\\training.gbdt_no_id.coor"
 training_Y_file = constants.dir_path + "sample\\training.Y"
 test_X_file = constants.dir_path + "sample\\features\\test.gbdt_no_id.coor"
 test_Y_file = constants.dir_path + "sample\\test.Y"
 
 
-
-
-
 def lr():
     begin = datetime.datetime.now()
     grid = False
-    train_x = read_coordinate_mtx(training_X_file)
+    train_x = read_coo_mtx(training_X_file)
     train_y = np.loadtxt(open(training_Y_file), dtype=int)
-    test_x = read_coordinate_mtx(test_X_file)
+    test_x = read_coo_mtx(test_X_file)
     test_y = np.loadtxt(open(test_Y_file), dtype=int)
 
     print "Loading data completed."
-    classifier = LogisticRegression(n_jobs=2, max_iter=80)
+    print "Read time: " + str(datetime.datetime.now() - begin)
+    classifier = LogisticRegression(max_iter=100)
     if grid:
         param_grid = {'C': [1, 5, 10]}
         grid = GridSearchCV(estimator=classifier, scoring='roc_auc', param_grid=param_grid)
@@ -51,16 +49,17 @@ def lr():
         auc_test = metrics.roc_auc_score(test_y, prob_test)
 
         end = datetime.datetime.now()
-        log_file = open("result/lr_baseline", "a")
-        log_file.write("sparse_id + cos + discrete_sim + gbdt:" + '\n')
-        log_file.write("score: " + str(score) + '\n')
-        log_file.write("auc_test: " + str(auc_test) + '\n')
-        log_file.write("time: " + str(end - begin) + '\n' + '\n')
+        rcd = "no_id + fm + gbdt:" + '\n'
+        rcd += "score: " + str(score) + '\n'
+        rcd += "auc_test: " + str(auc_test) + '\n'
+        rcd += "time: " + str(end - begin) + '\n' + '\n'
+        print rcd
+        log_file = open(constants.project_path+"result/lr_baseline", "a")
+        log_file.write(rcd)
         log_file.close()
 
 
 if __name__ == '__main__':
-
     lr()
 
     # test_y = np.loadtxt(open(test_Y_file), dtype=int)

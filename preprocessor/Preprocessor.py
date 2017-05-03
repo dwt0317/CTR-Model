@@ -3,10 +3,14 @@
 import pandas as pd
 from Utils import file_len
 import constants
-from id_handler import build_id_features
-from ctr_handler import build_ctr
-from gbdt_handler import build_gbdt
+import id_handler
+import ctr_handler
+import gbdt_handler
+import fm_handler
+import user_handler
 import io
+import operator
+from itertools import izip, starmap
 
 def build_Y():
     file_read = open(constants.dir_path + "sample\\test.part")
@@ -51,7 +55,7 @@ def write_as_libfm(features, file_write, fields):
 
 
 # 以scipy稀疏矩阵形式存储, similarity_start标记相似度特征的起始位置
-def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similarity_start,
+def build_x_helper(idset, ctr_set, user_profile, fm_v, file_read, file_write, similarity_start,
                    has_id=True, file_format="coordinate", dataset="train"):
     adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4] \
         , idset[5]
@@ -61,15 +65,15 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start)
 
 
-    # position * 2, user * 2, CTR * 6, similarity * (1*10), GBDT * 400, id * (6(unknown) + lens)
+    # position * 2, user * 2, CTR * 6, similarity * (1*10), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)
     n = 0
     values = 0
     if has_id:
-        values = 17 + 30
-        n = 2 + 2 + 6 + 10 + 600 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
+        values = 17 + 30 + 190
+        n = 2 + 2 + 6 + 10 + 190 + 600 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
     else:
-        values = 11 + 30
-        n = 2 + 2 + 6 + 10 + 600
+        values = 11 + 30 + 190
+        n = 2 + 2 + 6 + 10 + 600 + 190
     print "dimension:" + str(n)
 
     m = file_len(file_read.name)
@@ -79,7 +83,7 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
     if file_format == "coordinate":
         file_write.write(str(m) + " " + str(n) + " " + str(m * values) + '\n')  # row, column, number of values
 
-    gbdt_feature = build_gbdt(dataset)
+    gbdt_feature = gbdt_handler.build_gbdt(dataset)
     print "Building gbdt features finished"
     row = 0
     for line in file_read:
@@ -107,7 +111,14 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
         # features[20+query_desc_similarity[row]] = 1
 
         offset = 20
+        k = 0
+        for i in range(offset):
+            for j in range(i+1, offset):
+                if i in features and j in features and features[j] != 0 and features[i] != 0:
+                    features[k+offset] = float(features[i])*float(features[j])*sum(starmap(operator.mul, izip(fm_v[i], fm_v[j])))
+                k += 1
 
+        offset += k
         for k in gbdt_feature[row]:
             features[k+offset] = 1
 
@@ -166,38 +177,34 @@ def build_x_helper(idset, ctr_set, user_profile, file_read, file_write, similari
     file_write.close()
 
 
-def build_user_profile():
-    # make user raw data
-    user_profile_file = open(constants.dir_path + "userid_profile.txt")
-    user_profile = [['0', '0']]
-    for line in user_profile_file:
-        fields = line.strip('\n').split('\t')
-        user_profile.append([fields[1], fields[2]])
-    print "Buliding user profile finished."
-    return user_profile
+
 
 
 def build_x():
     stat = pd.read_csv(constants.dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
     print "Reading file finished."
 
-    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = build_id_features(stat)
+    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = id_handler.build_id_features(stat)
     idset = [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]   # shallow copy, idset[0]和adIDs指向同一地址
-    ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = build_ctr(idset)
+    ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_handler.build_ctr(idset)
     ctr_set = [ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user]
-    user_profile = build_user_profile()
+    user_profile = user_handler.build_user_profile()
+    fm_v = fm_handler.build_fm_features()
 
     # data file definition, newline is necessary when write as libfm format
     train_from = open(constants.dir_path + "sample\\training.part")
-    train_to = io.open(constants.dir_path + "sample\\features\\train.gbdt_no_id.libfm", "w", newline='\n')
-    # valid_from = open(constants.dir_path + "sample\\validation.part")
-    # valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt_no_id.libfm", "w", newline='\n')
-    # test_from = open(constants.dir_path + "sample\\test.part")
-    # test_to = open(constants.dir_path + "sample\\features\\test.gbdt_no_id.libfm", "w", newline='\n')
+    train_to = open(constants.dir_path + "sample\\features\\train.gbdt_no_id_fm.coor", "w")
+    valid_from = open(constants.dir_path + "sample\\validation.part")
+    valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt_no_id_fm.coor", "w")
+    test_from = open(constants.dir_path + "sample\\test.part")
+    test_to = open(constants.dir_path + "sample\\features\\test.gbdt_no_id_fm.coor", "w")
 
-    build_x_helper(idset, ctr_set, user_profile,  train_from, train_to, 0, has_id=False, file_format="libfm", dataset="train")
-    # build_x_helper(idset, ctr_set, user_profile,  valid_from, valid_to, 1800000, has_id=False, file_format="libfm", dataset="validation")
-    # build_x_helper(idset, ctr_set, user_profile, test_from, test_to, 2000000, has_id=False, file_format="libfm", dataset="test")
+    build_x_helper(idset, ctr_set, user_profile, fm_v, train_from, train_to, 0,
+                   has_id=False, file_format="coordinate", dataset="train")
+    build_x_helper(idset, ctr_set, user_profile, fm_v, valid_from, valid_to, 1800000,
+                   has_id=False, file_format="coordinate", dataset="validation")
+    build_x_helper(idset, ctr_set, user_profile, fm_v, test_from, test_to, 2000000,
+                   has_id=False, file_format="coordinate", dataset="test")
 
 
 

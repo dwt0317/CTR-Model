@@ -20,7 +20,31 @@ def file_len(fname):
 
 
 # read coo format matrix from file
-def read_coordinate_mtx(filename):
+def read_coo_mtx(filename):
+    training = open(filename, "r")
+    fields = training.readline().strip('\n').split(' ')
+    row_num = int(fields[0])
+    column_num = int(fields[1])
+    value_num = int(fields[2])
+    print row_num, column_num, value_num
+    rows = []
+    columns = []
+    values = []
+    i = 0
+    for line in training:
+        field = line.strip('\n').split(' ')
+        rows.append(int(field[0]))
+        columns.append(int(field[1]))
+        values.append(float(field[2]))
+        if i % 1000000 == 0:
+            print i
+        i += 1
+    b = sparse.coo_matrix((values, (rows, columns)), shape=(row_num, column_num))
+    return b
+
+
+# read coo format matrix from file
+def read_lil_mtx(filename):
     training = open(filename, "r")
     fields = training.readline().strip('\n').split(' ')
     rows = int(fields[0])
