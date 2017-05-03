@@ -8,9 +8,9 @@ import datetime
 import constants
 from Utils import read_coo_mtx
 
-training_X_file = constants.dir_path + "sample\\features\\training.gbdt_no_id.coor"
+training_X_file = constants.dir_path + "sample\\features\\training.no_id.coor"
 training_Y_file = constants.dir_path + "sample\\training.Y"
-test_X_file = constants.dir_path + "sample\\features\\test.gbdt_no_id.coor"
+test_X_file = constants.dir_path + "sample\\features\\test.no_id.coor"
 test_Y_file = constants.dir_path + "sample\\test.Y"
 
 
@@ -24,7 +24,7 @@ def lr():
 
     print "Loading data completed."
     print "Read time: " + str(datetime.datetime.now() - begin)
-    classifier = LogisticRegression(max_iter=100)
+    classifier = LogisticRegression(solver='sag', random_state=8)
     if grid:
         param_grid = {'C': [1, 5, 10]}
         grid = GridSearchCV(estimator=classifier, scoring='roc_auc', param_grid=param_grid)

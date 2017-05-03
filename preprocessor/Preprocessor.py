@@ -66,10 +66,8 @@ def build_x_helper(idset, ctr_set, user_profile, fm_v, file_read, file_write, si
 
 
     # position * 2, user * 2, CTR * 6, similarity * (1*10), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)
-    n = 0
-    values = 0
     if has_id:
-        values = 17 + 30 + 190
+        values = 11 + 30 + 190 + 6
         n = 2 + 2 + 6 + 10 + 190 + 600 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
     else:
         values = 11 + 30 + 190
@@ -193,18 +191,18 @@ def build_x():
 
     # data file definition, newline is necessary when write as libfm format
     train_from = open(constants.dir_path + "sample\\training.part")
-    train_to = open(constants.dir_path + "sample\\features\\train.gbdt_no_id_fm.coor", "w")
+    train_to = open(constants.dir_path + "sample\\features\\train.gbdt_sparse_id_fm.coor", "w")
     valid_from = open(constants.dir_path + "sample\\validation.part")
-    valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt_no_id_fm.coor", "w")
+    valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt_sparse_id_fm.coor", "w")
     test_from = open(constants.dir_path + "sample\\test.part")
-    test_to = open(constants.dir_path + "sample\\features\\test.gbdt_no_id_fm.coor", "w")
+    test_to = open(constants.dir_path + "sample\\features\\test.gbdt_sparse_id_fm.coor", "w")
 
     build_x_helper(idset, ctr_set, user_profile, fm_v, train_from, train_to, 0,
-                   has_id=False, file_format="coordinate", dataset="train")
+                   has_id=True, file_format="coordinate", dataset="train")
     build_x_helper(idset, ctr_set, user_profile, fm_v, valid_from, valid_to, 1800000,
-                   has_id=False, file_format="coordinate", dataset="validation")
+                   has_id=True, file_format="coordinate", dataset="validation")
     build_x_helper(idset, ctr_set, user_profile, fm_v, test_from, test_to, 2000000,
-                   has_id=False, file_format="coordinate", dataset="test")
+                   has_id=True, file_format="coordinate", dataset="test")
 
 
 

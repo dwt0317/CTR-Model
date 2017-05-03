@@ -96,7 +96,24 @@ params = {"objective": 'binary:logistic',
           }
 auc: 0.769600011151
 
-fm + 620 dimensions + 100 iters:
+FM:
+620 dimensions + mcmc + 100 iters:
 auc_test: 0.788769928022
 time: 0:26:42.623000
 
+
+no_id + fm + gbdt:
+score: 0.951675483245
+auc_test: 0.714867411616
+time: 0:01:05.657000
+
+no_id + fm + gbdt:
+score: 0.952195478045
+auc_test: 0.788707411123
+time: 0:42:19.402000
+
+sparse_id + fm + gbdt + sag (46397):
+score: 0.952395476045
+auc_test: 0.796841034468
+Read time: 0:21:02.857000
+time: 0:27:42.343000

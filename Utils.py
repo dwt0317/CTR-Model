@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from scipy import sparse
 import random
+import numpy as np
 
 
 def list2dict(mylist):
@@ -25,22 +26,22 @@ def read_coo_mtx(filename):
     fields = training.readline().strip('\n').split(' ')
     row_num = int(fields[0])
     column_num = int(fields[1])
-    value_num = int(fields[2])
+    value_num = int(fields[2]) + 10
     print row_num, column_num, value_num
-    rows = []
-    columns = []
-    values = []
+    rows = np.empty(value_num, dtype=int)
+    columns = np.empty(value_num, dtype=int)
+    values = np.empty(value_num, dtype=float)
     i = 0
     for line in training:
         field = line.strip('\n').split(' ')
-        rows.append(int(field[0]))
-        columns.append(int(field[1]))
-        values.append(float(field[2]))
+        rows[i] = int(field[0])
+        columns[i] = int(field[1])
+        values[i] = float(field[2])
         if i % 1000000 == 0:
             print i
         i += 1
     b = sparse.coo_matrix((values, (rows, columns)), shape=(row_num, column_num))
-    return b
+    return b.tocsr()
 
 
 # read coo format matrix from file
