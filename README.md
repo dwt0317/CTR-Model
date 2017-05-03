@@ -1,2 +1,2 @@
 # CTR-Model
-CTR model based on KDD Cup 2012 track2
+Click-through rate model on KDD Cup 2012 track2
