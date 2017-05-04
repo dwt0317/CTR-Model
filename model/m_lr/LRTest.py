@@ -54,7 +54,7 @@ def lr():
         rcd += "auc_test: " + str(auc_test) + '\n'
         rcd += "time: " + str(end - begin) + '\n' + '\n'
         print rcd
-        log_file = open(constants.project_path+"result/lr_baseline", "a")
+        log_file = open(constants.project_path+"result/exp_result", "a")
         log_file.write(rcd)
         log_file.close()
 

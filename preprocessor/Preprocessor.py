@@ -56,33 +56,44 @@ def write_as_libfm(features, file_write, fields):
 
 # 以scipy稀疏矩阵形式存储, similarity_start标记相似度特征的起始位置
 def build_x_helper(idset, ctr_set, user_profile, fm_v, file_read, file_write, similarity_start,
-                   has_id=True, file_format="coordinate", dataset="train"):
-    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4] \
+                   has_id=True,
+                   has_gbdt=True,
+                   has_fm=True,
+                   file_format="coordinate",
+                   dataset="train"):
+    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4]\
         , idset[5]
-    ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_set[0], ctr_set[1], ctr_set[2], ctr_set[3] \
+    ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_set[0], ctr_set[1], ctr_set[2], ctr_set[3]\
         , ctr_set[4], ctr_set[5]
 
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start)
 
+    ''' position * 2, user * 2, CTR * 6, similarity * (1*10), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)'''
 
-    # position * 2, user * 2, CTR * 6, similarity * (1*10), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)
+    values = 11
+    n = 2 + 2 + 6 + 10
+
+    if has_gbdt:
+        values += 30
+        n += 600
+    if has_fm:
+        values += 190
+        n += 190
     if has_id:
-        values = 11 + 30 + 190 + 6
-        n = 2 + 2 + 6 + 10 + 190 + 600 + 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
-    else:
-        values = 11 + 30 + 190
-        n = 2 + 2 + 6 + 10 + 600 + 190
+        values += 6
+        n += 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
     print "dimension:" + str(n)
 
     m = file_len(file_read.name)
     # file_write.write("%%MatrixMarket matrix coordinate integer general" + '\n' + "%" +'\n');  # mm sparse matrix
 
-
     if file_format == "coordinate":
         file_write.write(str(m) + " " + str(n) + " " + str(m * values) + '\n')  # row, column, number of values
 
-    gbdt_feature = gbdt_handler.build_gbdt(dataset)
-    print "Building gbdt features finished"
+    if has_gbdt:
+        gbdt_feature = gbdt_handler.build_gbdt(dataset)
+        print "Building gbdt features finished"
+
     row = 0
     for line in file_read:
         features = {}
@@ -109,18 +120,21 @@ def build_x_helper(idset, ctr_set, user_profile, fm_v, file_read, file_write, si
         # features[20+query_desc_similarity[row]] = 1
 
         offset = 20
-        k = 0
-        for i in range(offset):
-            for j in range(i+1, offset):
-                if i in features and j in features and features[j] != 0 and features[i] != 0:
-                    features[k+offset] = float(features[i])*float(features[j])*sum(starmap(operator.mul, izip(fm_v[i], fm_v[j])))
-                k += 1
 
-        offset += k
-        for k in gbdt_feature[row]:
-            features[k+offset] = 1
+        if has_fm:
+            k = 0
+            for i in range(offset):
+                for j in range(i+1, offset):
+                    if i in features and j in features and features[j] != 0 and features[i] != 0:
+                        features[k+offset] = float(features[i])*float(features[j])*sum(starmap(operator.mul, izip(fm_v[i], fm_v[j])))
+                    k += 1
+            offset += k
 
-        offset += 600
+        if has_gbdt:
+            for k in gbdt_feature[row]:
+                features[k+offset] = 1
+            offset += 600
+
         if has_id:
             # ID [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]
             # ID类特征第一位留给unknown,所有整体后移一位
@@ -191,19 +205,18 @@ def build_x():
 
     # data file definition, newline is necessary when write as libfm format
     train_from = open(constants.dir_path + "sample\\training.part")
-    train_to = open(constants.dir_path + "sample\\features\\train.gbdt_sparse_id_fm.coor", "w")
+    train_to = open(constants.dir_path + "sample\\features\\train.gbdt_sparse_id_no_fm.coor", "w")
     valid_from = open(constants.dir_path + "sample\\validation.part")
-    valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt_sparse_id_fm.coor", "w")
+    valid_to = open(constants.dir_path + "sample\\features\\validation.gbdt_sparse_id_no_fm.coor", "w")
     test_from = open(constants.dir_path + "sample\\test.part")
-    test_to = open(constants.dir_path + "sample\\features\\test.gbdt_sparse_id_fm.coor", "w")
+    test_to = open(constants.dir_path + "sample\\features\\test.gbdt_sparse_id_no_fm.coor", "w")
 
     build_x_helper(idset, ctr_set, user_profile, fm_v, train_from, train_to, 0,
-                   has_id=True, file_format="coordinate", dataset="train")
+                   has_id=True, has_fm=False, file_format="coordinate", dataset="train")
     build_x_helper(idset, ctr_set, user_profile, fm_v, valid_from, valid_to, 1800000,
-                   has_id=True, file_format="coordinate", dataset="validation")
+                   has_id=True, has_fm=False, file_format="coordinate", dataset="validation")
     build_x_helper(idset, ctr_set, user_profile, fm_v, test_from, test_to, 2000000,
-                   has_id=True, file_format="coordinate", dataset="test")
-
+                   has_id=True, has_fm=False, file_format="coordinate", dataset="test")
 
 
 if __name__ == '__main__':

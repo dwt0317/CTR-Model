@@ -8,3 +8,6 @@ def build_fm_features():
     v = np.loadtxt(fm_features_path)[:20]
     return v
 
+if __name__ == '__main__':
+    c = build_fm_features()
+    print c
