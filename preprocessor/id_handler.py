@@ -4,15 +4,18 @@ import pandas as pd
 import constants
 import numpy as np
 
+
 # 构造id类特征
 def build_id_features(stat):
     # 只选择频率较高的, 剩下的记为unknown, 过滤掉90%的id
+    # default setting: 30
 
+    threshold = 30
     # ad
     addf = stat[3].value_counts()
     adlist = []
     for i, row in addf.iteritems():
-        if (int(row) > 30):
+        if (int(row) > threshold):
             adlist.append(i)
     adIDs = list2dict(adlist)
 
@@ -20,7 +23,7 @@ def build_id_features(stat):
     aderdf = stat[4].value_counts()
     aderlist = []
     for i, row in aderdf.iteritems():
-        if (int(row) > 30):
+        if (int(row) > 100):
             aderlist.append(i)
     aderIDs = list2dict(aderlist)
 
@@ -28,7 +31,7 @@ def build_id_features(stat):
     keyworddf = stat[8].value_counts()
     keywordlist = []
     for i, row in keyworddf.iteritems():
-        if (int(row) > 30):
+        if (int(row) > threshold):
             keywordlist.append(i)
     keywordIDs = list2dict(keywordlist)
 
@@ -36,7 +39,7 @@ def build_id_features(stat):
     userdf = stat[11].value_counts()
     userlist = []
     for i, row in userdf.iteritems():
-        if (int(row) > 30):
+        if (int(row) > 20):
             userlist.append(i)
     userIDs = list2dict(userlist)
 
@@ -45,7 +48,7 @@ def build_id_features(stat):
     querydf = stat[7].value_counts()
     querylist = []
     for i, row in querydf.iteritems():
-        if (int(row) > 30):
+        if (int(row) > threshold):
             querylist.append(i)
     queryIDs = list2dict(querylist)
 
@@ -53,7 +56,7 @@ def build_id_features(stat):
     titledf = stat[9].value_counts()
     titlelist = []
     for i, row in titledf.iteritems():
-        if (int(row) > 30):
+        if (int(row) > threshold):
             titlelist.append(i)
     titleIDs = list2dict(titlelist)
     print "Building id finished."
