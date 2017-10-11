@@ -10,7 +10,7 @@ def build_id_features(stat):
     # 只选择频率较高的, 剩下的记为unknown, 过滤掉90%的id
     # default setting: 30
 
-    threshold = 30
+    threshold = 3
     # ad
     addf = stat[3].value_counts()
     adlist = []
@@ -23,26 +23,25 @@ def build_id_features(stat):
     aderdf = stat[4].value_counts()
     aderlist = []
     for i, row in aderdf.iteritems():
-        if (int(row) > 100):
+        if (int(row) > threshold):
             aderlist.append(i)
     aderIDs = list2dict(aderlist)
 
-    # keyword
-    keyworddf = stat[8].value_counts()
-    keywordlist = []
-    for i, row in keyworddf.iteritems():
+    # depth
+    depthdf = stat[5].value_counts()
+    depthlist = []
+    for i, row in depthdf.iteritems():
         if (int(row) > threshold):
-            keywordlist.append(i)
-    keywordIDs = list2dict(keywordlist)
+            depthlist.append(i)
+    depthIDs = list2dict(depthlist)
 
-    # user
-    userdf = stat[11].value_counts()
-    userlist = []
-    for i, row in userdf.iteritems():
-        if (int(row) > 20):
-            userlist.append(i)
-    userIDs = list2dict(userlist)
-
+    # position
+    posdf = stat[6].value_counts()
+    poslist = []
+    for i, row in posdf.iteritems():
+        if (int(row) > threshold):
+            poslist.append(i)
+    posIDs = list2dict(poslist)
 
     # query
     querydf = stat[7].value_counts()
@@ -52,6 +51,14 @@ def build_id_features(stat):
             querylist.append(i)
     queryIDs = list2dict(querylist)
 
+    # keyword
+    keyworddf = stat[8].value_counts()
+    keywordlist = []
+    for i, row in keyworddf.iteritems():
+        if (int(row) > threshold):
+            keywordlist.append(i)
+    keywordIDs = list2dict(keywordlist)
+
     # title
     titledf = stat[9].value_counts()
     titlelist = []
@@ -59,13 +66,38 @@ def build_id_features(stat):
         if (int(row) > threshold):
             titlelist.append(i)
     titleIDs = list2dict(titlelist)
+
+    # description
+    desdf = stat[10].value_counts()
+    deslist = []
+    for i, row in desdf.iteritems():
+        if (int(row) > threshold):
+            deslist.append(i)
+    desIDs = list2dict(deslist)
+
+
+    # user
+    userdf = stat[11].value_counts()
+    userlist = []
+    for i, row in userdf.iteritems():
+        if (int(row) > 5):
+            userlist.append(i)
+    userIDs = list2dict(userlist)
+
     print "Building id finished."
-    return adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs
+    return adIDs, aderIDs, depthIDs, posIDs, queryIDs, keywordIDs, titleIDs, desIDs, userIDs
+
+
+'''
+position:1, 2, 3
+depth:1, 2, 3
+'''
 
 
 # 统计id类特征
 def statistic():
     stat = pd.read_csv(constants.dir_path + "sample\\training.part", header=None, delimiter='\t', dtype=str)
+    print stat[5].value_counts()
     if False:
         print "Reading file finished."
         adIDs = list2dict(stat[3].unique().tolist())
@@ -86,35 +118,35 @@ def statistic():
             adlist.append(int(row))
         a = np.array(adlist)
         print a
-        print "ad 20%: " + str(np.percentile(a, 85))  # 10%分位数
+        print "ad 20%: " + str(np.percentile(a, 10))  # 10%分位数
 
         querylist = []
         querydf = stat[4].value_counts()
         for i, row in querydf.iteritems():
                 querylist.append(int(row))
         a = np.array(querylist)
-        print "ader 20%: " + str(np.percentile(a, 85))  # 10%分位数
+        print "ader 20%: " + str(np.percentile(a, 10))  # 10%分位数
 
         querylist = []
         querydf = stat[8].value_counts()
         for i, row in querydf.iteritems():
                 querylist.append(int(row))
         a = np.array(querylist)
-        print "keyword 20%: " + str(np.percentile(a, 85))  # 10%分位数
+        print "keyword 20%: " + str(np.percentile(a, 10))  # 10%分位数
 
         querylist = []
         querydf = stat[11].value_counts()
         for i, row in querydf.iteritems():
                 querylist.append(int(row))
         a = np.array(querylist)
-        print "user 20%: " + str(np.percentile(a, 85))  # 10%分位数
+        print "user 20%: " + str(np.percentile(a, 10))  # 10%分位数
 
         querylist = []
         querydf = stat[7].value_counts()
         for i, row in querydf.iteritems():
                 querylist.append(int(row))
         a = np.array(querylist)
-        print "query 20%: " + str(np.percentile(a, 85))  # 10%分位数
+        print "query 20%: " + str(np.percentile(a, 10))  # 10%分位数
 
         querylist = []
         querydf = stat[9].value_counts()

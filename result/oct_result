@@ -1,0 +1,83 @@
+
+
+lr: new basic iter 40
+accuracy: 0.948095519045
+logloss: 1.79272237498
+auc_test: 0.675532111472
+time: 0:03:00.604000
+
+lr: new basic iter 100
+accuracy: 0.945105548945
+logloss: 1.89599392286
+auc_test: 0.660511449419
+time: 0:09:50.832000
+
+lr: new basic iter 50, more id
+accuracy: 0.946220537795
+logloss: 1.85748417597
+auc_test: 0.668529155078
+time: 0:03:47.428000
+
+
+2017-10-09 21:33:07.465000
+fm: new basic iter 80
+logloss: 0.219664745143
+auc_test: 0.605855279097
+
+2017-10-09 21:41:04.078000
+fm: new basic iter 30
+logloss: 0.204109979324
+auc_test: 0.62143830627
+
+2017-10-09 21:52:45.927000
+fm: basic_no-cl-im-comb basic iter 30
+logloss: 0.18131981267
+auc_test: 0.715633379847
+
+2017-10-09 22:06:20.110000
+fm: basic_no-comb iter 30
+logloss: 0.209741186003
+auc_test: 0.640218998046
+
+2017-10-10 10:52:10.380000
+fm: basic_no-log-comb iter 30 norm
+logloss: 0.183109497929
+auc_test: 0.696376685908
+
+2017-10-10 11:50:11.308000
+fm: basic_no-cl-im iter 20 norm
+logloss: 0.183916143672
+auc_test: 0.662936907038
+
+2017-10-10 12:05:16.598000
+fm: basic_no-cl-im-comb_norm iter 25 norm
+logloss: 0.178792543713
+auc_test: 0.711947674661
+
+wrong conclusion: 以上实验说明click number, impression number, combination cvr是负作用, 归一化无明显效果
+以上实验均存在bug，cvr统计有错误
+----------------------------------------------------------------
+
++修正了错误更低了？（id有bug）
+2017-10-10 17:44:52.245000
+fm: basic_no-cl-im-comb iter 25
+logloss: 0.185542532635
+auc_test: 0.68161591909
+
+改正了诸多bug,去掉了depth和description的ctr
+2017-10-11 10:42:25.346000
+fm: basic_no-cl-im-comb iter 25
+logloss: 0.184030668057
+auc_test: 0.702723601326
+
+2017-10-11 10:52:32.896000
+fm: basic_no-cl-im-comb iter 35
+logloss: 0.180880322332
+auc_test: 0.708697488266
+
+加入depth onehot及cvr特征
+2017-10-11 11:17:59.915000
+fm: basic_no-cl-im-comb_depth iter 35
+logloss: 0.179863138685
+auc_test: 0.714435067842
+

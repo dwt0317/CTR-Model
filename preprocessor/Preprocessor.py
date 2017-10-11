@@ -13,6 +13,9 @@ import operator
 import gc
 from itertools import izip, starmap
 import math
+from sklearn import preprocessing, datasets
+import numpy as np
+
 
 def build_Y():
     file_read = open(constants.dir_path + "sample\\test.part")
@@ -55,32 +58,32 @@ def write_as_coor(features, file_write, row):
 # 以libfm形式存储
 def write_as_libfm(features, file_write, fields):
     file_write.write(unicode(fields[0]+' '))   # write y  libfm
-    for col in features.keys():  # row and column of matrix market start from 1, coo matrix start from 0
+    for col in sorted(features.keys()):  # row and column of matrix market start from 1, coo matrix start from 0
         file_write.write(unicode(str(col) + ":" + str(features[col]) + ' '))
     file_write.write(unicode('\n'))
 
 
 # 以scipy稀疏矩阵形式存储, similarity_start标记相似度特征的起始位置
-def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, fm_v, file_read, file_write, similarity_start,
+def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, file_read, file_write, similarity_start,
+                   fm_v=None,
                    has_id=True,
                    has_gbdt=False,
                    has_fm=False,
                    file_format="fm",
                    dataset="train"):
-    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4]\
-        , idset[5]
+    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[4], idset[5], idset[6]\
+        , idset[8]
 
     discrete = False
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start, discrete)
 
-    ''' position * 2, user * 2, (impression, click, CTR) * 8 * 3, combine ctr * 3, similarity * (2*(10)), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)'''
+    ''' position * 2, user * 2, (impression, click, CTR) * 9 * 3, combine ctr * 3, similarity * (2*(10)), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)'''
 
-    values = 2 + 2 + 18 + 3 + 2
-    dim = 2 + 2 + 18 + 3 + 2
+    values = 2 + 2 + 27 + 3 + 2
+    dim = 2 + 2 + 27 + 3 + 2
 
     if discrete:
-        dim += 33
-
+        dim += 18
     if has_gbdt:
         values += 30
         dim += 600
@@ -108,60 +111,74 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
         features = {}
         fields = line.strip('\n').split('\t')
 
+        adId, adverId, depth, pos, queryId, keywordId, titleId, desId, userId = fields[3], fields[4], fields[5], \
+                                                                                fields[6], fields[7], fields[8], \
+                                                                                fields[9], fields[10], fields[11]
+
         # position [position, relative position]
         offset = 0
-        features[0] = fields[6]
-        features[1] = round((float(fields[5]) - float(fields[6])) / float(fields[5]), 5)
-
+        features[offset+int(pos)] = 1
+        offset += 4
+        features[offset] = round((float(fields[5]) - float(fields[6])) / float(fields[5]), 5)
+        offset += 1
+        features[offset+int(depth)] = 1
+        offset += 4
         # user [age, gender]
-        features[2] = user_profile.setdefault(fields[11], ['0', '0'])[0]      # list indices must be integers, not str
-        features[3] = user_profile.setdefault(fields[11], ['0', '0'])[1]
-        offset = 4
+        age = int(user_profile.setdefault(fields[11], ['0', '0'])[0])
+        features[offset+(age / 10)] = 1
+        offset += 13
+        gender = int(user_profile.setdefault(fields[11], ['0', '0'])[1])
+        features[offset+gender] = 1
+        offset += 3
 
-        # CTR [ad, advertiser, depth, pos, query, keyword, title, user]
-        for i in range(len(ctr_set)-1):
-            features[offset+i] = ctr_set[i].setdefault(fields[i+3], 0.05)
-        user_id_idx = len(ctr_set)-1     # user_id ctr is processed separately
-        features[offset+user_id_idx] = ctr_set[user_id_idx].setdefault(fields[11], 0.05)
-        offset += len(ctr_set)
+        # CTR [ad, advertiser, depth, pos, query, keyword, title, description, user]
+
+        ctr_ad, ctr_adver, ctr_depth, ctr_pos, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_set[0], ctr_set[1], \
+                                                                                             ctr_set[2], ctr_set[3], \
+                                                                                             ctr_set[4], ctr_set[5], \
+                                                                                             ctr_set[6], ctr_set[8]
+
+        # for i in range(len(ctr_set)):
+        #     features[offset+i] = ctr_set[i].setdefault(fields[i+3], 0.05)
+        # offset += len(ctr_set)
+
+        features[offset + 1] = ctr_ad.setdefault(adId, 0.05)
+        features[offset + 2] = ctr_adver.setdefault(adverId, 0.05)
+        features[offset + 3] = ctr_pos.setdefault(pos, 0.05)
+        features[offset + 4] = ctr_query.setdefault(queryId, 0.05)
+        features[offset + 5] = ctr_keyword.setdefault(keywordId, 0.05)
+        features[offset + 6] = ctr_title.setdefault(titleId, 0.05)
+        features[offset + 7] = ctr_user.setdefault(userId, 0.05)
+        features[offset + 8] = ctr_depth.setdefault(depth, 0.05)
+        offset += 10
+
+
 
         # impression number
-        for i in range(len(impre_set)-1):
-            features[offset+i] = round(math.log(impre_set[i].setdefault(fields[i+3], 1)+1, 10), 5)
-        user_id_idx = len(impre_set)-1     # user_id ctr is processed separately
-        features[offset+user_id_idx] = round(math.log(impre_set[user_id_idx].setdefault(fields[11], 1)+1, 10), 5)
-        offset += len(impre_set)
+        # for i in range(len(impre_set)):
+        #     features[offset+i] = impre_set[i].setdefault(fields[i+3], 0)
+        # offset += len(impre_set)
 
         # click number
-        for i in range(len(click_set)-1):
-            features[offset+i] = round(math.log(click_set[i].setdefault(fields[i+3], 1)+1, 2), 5)
-        user_id_idx = len(click_set)-1     # user_id ctr is processed separately
-        features[offset+user_id_idx] = round(math.log(click_set[user_id_idx].setdefault(fields[11], 1)+1, 2), 5)
-        offset += len(click_set)
+        # for i in range(len(click_set)):
+        #     features[offset+i] = click_set[i].setdefault(fields[i+3], 0)
+        # offset += len(click_set)
 
         # combine ctr
-        hash_ids = [hash(fields[3] + '_' + fields[7]) % 1e6, hash(fields[3] + '_' + fields[6]) % 1e6, hash(fields[3] + '_' + fields[11]) % 1e6]
-        for i in range(len(combine_ctr_set)):
-            features[offset+i] = combine_ctr_set[i].setdefault(hash_ids[i], 0.05)
-        offset += len(combine_ctr_set)
-
-
-        # features[4] = ctr_set[.setdefault(fields[3], 0.05)
-        # features[5] = ctr_ader.setdefault(fields[4], 0.05)
-        # features[6] = ctr_query.setdefault(fields[7], 0.05)
-        # features[7] = ctr_keyword.setdefault(fields[8], 0.05)
-        # features[8] = ctr_title.setdefault(fields[9], 0.05)
-        # features[9] = ctr_user.setdefault(fields[11], 0.05)
+        # hash_ids = [hash(fields[3] + '_' + fields[7]) % 1e6, hash(fields[3] + '_' + fields[6]) % 1e6, hash(fields[3] + '_' + fields[11]) % 1e6]
+        # for i in range(len(combine_ctr_set)):
+        #     features[offset+i] = combine_ctr_set[i].setdefault(hash_ids[i], 0.05)
+        # offset += len(combine_ctr_set)
 
         # similarity, query-title, query-description
         if discrete:
-            features[offset+10+query_title_similarity[row]] = 1
-            features[offset+20+query_desc_similarity[row]] = 1
-            offset += 30
+            features[offset+query_title_similarity[row]] = 1
+            features[offset+10+query_desc_similarity[row]] = 1
+            offset += 20
         else:
-            features[offset+10] = query_title_similarity[row]
-            features[offset+11] = query_desc_similarity[row]
-            offset += 12
+            features[offset] = query_title_similarity[row]
+            features[offset+1] = query_desc_similarity[row]
+            offset += 2
 
         if has_fm:
             k = 0
@@ -180,38 +197,38 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
         if has_id:
             # ID [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]
             # ID类特征第一位留给unknown,所有整体后移一位
-            if fields[3] in adIDs:
-                features[offset + adIDs[fields[3]] + 1] = 1     # 使用setdefault会改变矩阵的大小
+            if adId in adIDs:
+                features[offset + adIDs[adId] + 1] = 1     # 使用setdefault会改变矩阵的大小
             else:                                 # 不要使用value.key in dict.keys()，这样会新建一个key的list,
                 features[offset] = 1                            # 可以用value.key in dict
             offset += (len(adIDs) + 1)
 
-            if fields[4] in aderIDs:
-                features[offset + aderIDs[fields[4]] + 1] = 1
+            if adverId in aderIDs:
+                features[offset + aderIDs[adverId] + 1] = 1
             else:
                 features[offset] = 1
             offset += (len(aderIDs) + 1)
 
-            if fields[7] in queryIDs:
-                features[offset + queryIDs[fields[7]] + 1] = 1
+            if queryId in queryIDs:
+                features[offset + queryIDs[queryId] + 1] = 1
             else:
                 features[offset] = 1
             offset += (len(queryIDs) + 1)
 
-            if fields[8] in keywordIDs:
-                features[offset + keywordIDs[fields[8]] + 1] = 1
+            if keywordId in keywordIDs:
+                features[offset + keywordIDs[keywordId] + 1] = 1
             else:
                 features[offset] = 1
             offset += (len(keywordIDs) + 1)
 
-            if fields[9] in titleIDs:
-                features[offset + titleIDs[fields[9]] + 1] = 1
+            if titleId in titleIDs:
+                features[offset + titleIDs[titleId] + 1] = 1
             else:
                 features[offset] = 1
             offset += (len(titleIDs) + 1)
 
-            if fields[11] in userIDs:
-                features[offset + userIDs[fields[11]] + 1] = 1
+            if userId in userIDs:
+                features[offset + userIDs[userId] + 1] = 1
             else:
                 features[offset] = 1
 
@@ -343,31 +360,36 @@ def build_x_no_transform(idset, ctr_set, user_profile, fm_v, file_read, file_wri
     file_write.close()
 
 
-
 def build_x():
+
+    train_to_path = constants.dir_path + "sample\\features\\train.basic_no-cl-im-comb.libfm"
+    valid_to_path = constants.dir_path + "sample\\features\\valid.basic_no-cl-im-comb.libfm"
+    test_to_path = constants.dir_path + "sample\\features\\test.basic_no-cl-im-comb.libfm"
+
     stat = pd.read_csv(constants.dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
     print "Reading file finished."
 
-    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = id_handler.build_id_features(stat)
-    idset = [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]   # shallow copy, idset[0]和adIDs指向同一地址
+    adIDs, aderIDs, depthIDs, posIDs, queryIDs, keywordIDs, titleIDs, desIDs, userIDs = id_handler.build_id_features(stat)
+    idset = [adIDs, aderIDs, depthIDs, posIDs, queryIDs, keywordIDs, titleIDs, desIDs, userIDs]   # shallow copy, idset[0]和adIDs指向同一地址
     impre_set, click_set, ctr_set, combine_ctr_set = ctr_handler.build_ctr(idset)
     user_profile = user_handler.build_user_profile(userIDs)
-    fm_v = fm_handler.build_fm_features()
+    # fm_v = fm_handler.build_fm_features()
+
 
     # data file definition, newline is necessary when write as libfm format
     train_from = open(constants.dir_path + "sample\\training.part")
-    train_to = open(constants.dir_path + "sample\\features\\train.new_basic.libfm", "w")
-    valid_from = open(constants.dir_path + "sample\\validation.part")
-    valid_to = open(constants.dir_path + "sample\\features\\validation.new_basic.libfm", "w")
+    train_to = io.open(train_to_path, "w", newline='\n')
+    # valid_from = open(constants.dir_path + "sample\\validation.part")
+    # valid_to = io.open(valid_to_path, "w", newline='\n')
     test_from = open(constants.dir_path + "sample\\test.part")
-    test_to = open(constants.dir_path + "sample\\features\\test.new_basic.libfm", "w")
+    test_to = io.open(test_to_path, "w", newline='\n')
 
-    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, fm_v, train_from, train_to, 0,
-                   has_id=True, has_fm=False, file_format="fm", dataset="train")
-    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, fm_v, valid_from, valid_to, 1800000,
-                   has_id=True, has_fm=False, file_format="fm", dataset="validation")
-    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, fm_v, test_from, test_to, 2000000,
-                   has_id=True, has_fm=False, file_format="fm", dataset="test")
+    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
+                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train")
+    # build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, valid_from, valid_to, 1800000,
+    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="validation")
+    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
+                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test")
 
     # build_x_no_transform(idset, ctr_set, user_profile, fm_v, train_from, train_to, 0,
     #                has_id=True, has_fm=False, dataset="train")
@@ -377,9 +399,26 @@ def build_x():
     #                has_id=True, has_fm=False,  dataset="test")
 
 
-if __name__ == '__main__':
+    # feature_files = [train_to_path, test_to_path]
+    # scale_x(feature_files)
+    # return
 
+
+# scale data to [0, 1]
+def scale_x(feature_files):
+    min_max_scaler = preprocessing.MaxAbsScaler()
+    for f in feature_files:
+        x, y = datasets.load_svmlight_file(f)
+        x_scale = np.round(min_max_scaler.fit_transform(x), 4)
+        datasets.dump_svmlight_file(x_scale, y, f)
+        print str(f) + " finished."
+
+
+
+
+if __name__ == '__main__':
     build_x()
+    # scale_x(feature_files)
     # stat = pd.read_csv(dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
     # print "read file finished."
     # adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = build_id(stat)

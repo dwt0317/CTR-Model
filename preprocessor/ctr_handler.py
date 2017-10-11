@@ -6,6 +6,7 @@ def ctr_helper(idset, impre_set, click_set):
     alpha = 0.05  # for smoothing
     beta = 75
     ctr_set = []
+    print len(idset), len(impre_set), len(click_set)
     for i in range(len(idset)):
         ids = idset[i]
         ctrs = {}
@@ -35,10 +36,10 @@ def combine_ctr_helper(idset, impre_set, click_set):
     return combine_ctr_set
 
 
-# CTR features [ad, advertiser, depth, pos, query, keyword, title, user], [ad_query, ad_position, ad_user]
+# CTR features [ad, advertiser, depth, pos, query, keyword, title, description user], [ad_query, ad_position, ad_user]
 def build_ctr(idset):
-    impre_ad, impre_ader, impre_keyword, impre_user, impre_query, impre_title = {}, {}, {}, {}, {}, {}
-    click_ad, click_ader, click_keyword, click_user, click_query, click_title = {}, {}, {}, {}, {}, {}
+    impre_ad, impre_ader, impre_keyword, impre_user, impre_query, impre_title, impre_des = {}, {}, {}, {}, {}, {}, {}
+    click_ad, click_ader, click_keyword, click_user, click_query, click_title, click_des = {}, {}, {}, {}, {}, {}, {}
 
     impre_depth, impre_pos = {}, {}
     click_depth, click_pos = {}, {}
@@ -47,7 +48,7 @@ def build_ctr(idset):
     click_ad_query, click_ad_position, click_ad_user = {}, {}, {}
 
     ad_query_ids, ad_position_ids, ad_user_ids = set(), set(), set()
-    stat_file = open(constants.dir_path + "sample\\total.part", 'r')
+    stat_file = open(constants.dir_path + "sample\\training.part", 'r')
     for line in stat_file:            # 迭代pandas太慢了，不要用
         row = line.strip('\n').split('\t')
 
@@ -66,6 +67,7 @@ def build_ctr(idset):
         impre_query[row[7]] = 1 + impre_query.setdefault(row[7], 0)
         impre_keyword[row[8]] = 1 + impre_keyword.setdefault(row[8], 0)
         impre_title[row[9]] = 1 + impre_title.setdefault(row[9], 0)
+        impre_des[row[10]] = 1 + impre_des.setdefault(row[10], 0)
         impre_user[row[11]] = 1 + impre_user.setdefault(row[11], 0)
 
         impre_ad_query[ad_query_hash] = 1 + impre_ad_query.setdefault(ad_query_hash, 0)
@@ -80,6 +82,7 @@ def build_ctr(idset):
             click_query[row[7]] = 1 + click_query.setdefault(row[7], 0)
             click_keyword[row[8]] = 1 + click_keyword.setdefault(row[8], 0)
             click_title[row[9]] = 1 + click_title.setdefault(row[9], 0)
+            click_des[row[10]] = 1 + click_des.setdefault(row[10], 0)
             click_user[row[11]] = 1 + click_user.setdefault(row[11], 0)
 
             click_ad_query[ad_query_hash] = 1 + click_ad_query.setdefault(ad_query_hash, 0)
@@ -87,12 +90,13 @@ def build_ctr(idset):
             click_ad_user[ad_user_hash] = 1 + click_ad_user.setdefault(ad_user_hash, 0)
 
     print "Counting impression and click finished."
-    impre_set = [impre_ad, impre_ader, impre_depth, impre_pos, impre_query, impre_keyword, impre_title, impre_user]
-    click_set = [click_ad, click_ader, click_depth, click_pos, click_query, click_keyword, click_title, click_user]
+    impre_set = [impre_ad, impre_ader, impre_depth, impre_pos, impre_query, impre_keyword, impre_title, impre_des, impre_user]
+    click_set = [click_ad, click_ader, click_depth, click_pos, click_query, click_keyword, click_title, click_des, click_user]
 
     combine_impre_set = [impre_ad_query, impre_ad_position, impre_ad_user]
     combine_click_set = [click_ad_query, click_ad_position, click_ad_user]
     combine_id_set = [ad_query_ids, ad_position_ids, ad_user_ids]
     combine_ctr_set = combine_ctr_helper(combine_id_set, combine_impre_set, combine_click_set)
     del combine_id_set
+
     return impre_set, click_set, ctr_helper(idset, impre_set, click_set), combine_ctr_set
