@@ -90,7 +90,7 @@ def build_fm_interaction():
 
 
 def load_cygwin_pred():
-    y_prob = np.loadtxt(open(cygwin_libfm+"/out/fm_35_basic_no-cl-im-comb.out"), dtype=float)
+    y_prob = np.loadtxt(open(cygwin_libfm+"/out/fm_no-cl-im-comb_45.out"), dtype=float)
 
     test_y = np.loadtxt(open(test_Y_file), dtype=float)
     auc_test = metrics.roc_auc_score(test_y, y_prob)
@@ -98,7 +98,7 @@ def load_cygwin_pred():
     logloss = metrics.log_loss(test_y, y_prob)
 
     rcd = str(datetime.datetime.now()) + '\n'
-    rcd += "fm: basic_no-cl-im-comb_depth iter 35" + '\n'
+    rcd += "fm: basic_no-cl-im-comb_45" + '\n'
     # rcd += "accuracy: " + str(accuracy) + '\n'
     rcd += "logloss: " + str(logloss) + '\n'
     rcd += "auc_test: " + str(auc_test) + '\n' + '\n'

@@ -75,9 +75,88 @@ fm: basic_no-cl-im-comb iter 35
 logloss: 0.180880322332
 auc_test: 0.708697488266
 
-加入depth onehot及cvr特征
+加入depth onehot及cvr特征   <<<<<<----------------
 2017-10-11 11:17:59.915000
 fm: basic_no-cl-im-comb_depth iter 35
 logloss: 0.179863138685
 auc_test: 0.714435067842
+
+
+加入了impression特征, impression特征不是很好用
+----------------------------------
+2017-10-11 19:09:43.312000
+fm: basic_no-cl-comb iter 50
+logloss: 0.202184042633
+auc_test: 0.699718260085
+
+2017-10-11 19:10:30.861000
+fm: basic_no-cl-comb_norm iter 35
+logloss: 1.36262515676
+auc_test: 0.70759085896
+----------------------------------
+
+2017-10-19 15:23:45.593000
+lr: no-cl-comb_norm
+accuracy: 0.0478995210048
+logloss: 19.0850255889
+auc_test: 0.70435104591
+time: 0:05:56.194000
+
+2017-10-19 15:36:06.893000
+lr_sgd: basic_no-cl-comb_norm
+accuracy: 0.0478995210048
+logloss: 4.82892131959
+auc_test: 0.713038793971
+time: 0:00:47.543000
+
+
+下面两个lr的结果显然是有问题的
+--------------------------------------------------
+2017-10-19 16:24:48.981000
+lr_sgd: basic_no-cl-comb_norm 1e-4 200
+{'warm_start': False, 'loss': 'log', 'n_jobs': 1, 'eta0': 0.0, 'verbose': 1, 'shuffle': True, 'fit_intercept': True, 'epsilon': 0.1, 'average': False, 'max_iter': 300, 'penalty': 'l2', 'power_t': 0.5, 'random_state': None, 'tol': 0.0001, 'l1_ratio': 0.15, 'n_iter': None, 'alpha': 0.0001, 'learning_rate': 'optimal', 'class_weight': None}
+accuracy: 0.0478995210048
+logloss: 4.83544599039
+auc_test: 0.711907018066
+time: 0:00:49.495000
+
+2017-10-19 16:37:13.888000
+lr: basic_no-cl-comb_norm
+{'warm_start': False, 'C': 1.0, 'n_jobs': 1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l1', 'multi_class': 'ovr', 'random_state': None, 'dual': False, 'tol': 0.0001, 'solver': 'liblinear', 'class_weight': None}
+accuracy: 0.0478995210048
+logloss: 23.0472148994
+auc_test: 0.705840987139
+time: 0:07:42.881000
+--------------------------------------------------------------------------
+
+
+2017-10-19 21:22:26.117000          <<<<<<----------------
+lr: basic_no-cl-im-comb
+{'warm_start': False, 'C': 1.0, 'n_jobs': 1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': None, 'dual': False, 'tol': 1e-05, 'solver': 'liblinear', 'class_weight': None}
+accuracy: 0.951655483445
+logloss: 0.184310183179
+auc_test: 0.706294208343
+time: 0:07:17.810000
+
+2017-10-19 21:58:55.789000
+lr: basic_no-cl-im-comb 130
+{'warm_start': False, 'C': 1.0, 'n_jobs': 1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 130, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': None, 'dual': False, 'tol': 1e-05, 'solver': 'liblinear', 'class_weight': None}
+accuracy: 0.951655483445
+logloss: 0.184310183179
+auc_test: 0.706294208343
+time: 0:07:16.556000
+
+
+2017-10-19 22:11:49.227000           <<<<<<----------------
+fm: basic_no-cl-im-comb_45
+logloss: 0.178783722719
+auc_test: 0.714733467546
+
+
+gbdt不使用userid特征，使用30阈值的其他特征
+2017-10-20 11:20:22.535000          <<<<<<----------------
+gbdt: no-cl-im-comb 85
+logloss: 0.178481724398
+auc_test: 0.711486045585
+time: 0:02:42.420000
 

@@ -10,9 +10,9 @@ import constants
 from Utils import read_coo_mtx
 import joblib
 
-training_X_file = constants.dir_path + "sample\\features\\train.new_basic.libfm"
+training_X_file = constants.dir_path + "sample\\features\\train.basic_no-cl-im-comb.libfm"
 training_Y_file = constants.dir_path + "sample\\training.Y"
-test_X_file = constants.dir_path + "sample\\features\\test.new_basic.libfm"
+test_X_file = constants.dir_path + "sample\\features\\test.basic_no-cl-im-comb.libfm"
 test_Y_file = constants.dir_path + "sample\\test.Y"
 
 
@@ -24,13 +24,13 @@ def lr():
     # test_x = read_coo_mtx(test_X_file)
     # test_y = np.loadtxt(open(test_Y_file), dtype=int)
 
-    train_x, train_y = load_svmlight_file(training_X_file)
-    test_x, test_y = load_svmlight_file(test_X_file, n_features=train_x.shape[0])
+    train_x, train_y = load_svmlight_file(training_X_file, n_features=363160)
+    test_x, test_y = load_svmlight_file(test_X_file, n_features=363160)
     # print train_x.shape, test_x.shape
     print "Loading data completed."
     print "Read time: " + str(datetime.datetime.now() - begin)
-    # classifier =
-    classifier = SGDClassifier()
+
+    classifier = LogisticRegression(penalty='l2', max_iter=130, tol=1e-5)
     # if grid:
     #     param_grid = {'C': [1, 5, 10]}
     #     grid = GridSearchCV(estimator=classifier, scoring='roc_auc', param_grid=param_grid)
@@ -49,17 +49,18 @@ def lr():
         y_pred = classifier.predict(test_x)
 
         accuracy = metrics.accuracy_score(test_y, y_pred)
-        logloss = metrics.log_loss(test_y, y_pred)
         # prob_train = classifier.predict_proba(training_x)[:, 1]  # proba得到两行，一行错的一行对的
-
         prob_test = classifier.predict_proba(test_x)[:, 1]  # proba得到两行, 一行错的一行对的,对的是点击的概率，错的是不点的概率
+        logloss = metrics.log_loss(test_y, prob_test)
         auc_test = metrics.roc_auc_score(test_y, prob_test)
 
-        np.savetxt(open(constants.project_path+"result/10_7_lr_pred", "w"), y_pred, fmt='%.5f')
-
         end = datetime.datetime.now()
+        day = datetime.date.today()
+        np.savetxt(open(constants.project_path+"result/pred/basic_no-cl-im-comb_lr_pred"+str(day), "w"), prob_test, fmt='%.5f')
+
         rcd = str(end) + '\n'
-        rcd += "lr: new basic" + '\n'
+        rcd += "lr: basic_no-cl-im-comb 130" + '\n'
+        rcd += str(classifier.get_params()) + '\n'
         rcd += "accuracy: " + str(accuracy) + '\n'
         rcd += "logloss: " + str(logloss) + '\n'
         rcd += "auc_test: " + str(auc_test) + '\n'

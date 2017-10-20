@@ -8,9 +8,9 @@ import numpy as np
 # 构造id类特征
 def build_id_features(stat):
     # 只选择频率较高的, 剩下的记为unknown, 过滤掉90%的id
-    # default setting: 30
+    # default setting: 30, 3 for lr/fm, 30 for gbdt
 
-    threshold = 3
+    threshold = 30
     # ad
     addf = stat[3].value_counts()
     adlist = []

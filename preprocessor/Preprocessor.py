@@ -138,6 +138,11 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
                                                                                              ctr_set[4], ctr_set[5], \
                                                                                              ctr_set[6], ctr_set[8]
 
+        impre_ad, impre_adver, impre_depth, impre_pos, impre_query, impre_keyword, impre_title, impre_user = impre_set[0], impre_set[1], \
+                                                                                                             impre_set[2], impre_set[3], \
+                                                                                                             impre_set[4], impre_set[5], \
+                                                                                                             impre_set[6], impre_set[8]
+
         # for i in range(len(ctr_set)):
         #     features[offset+i] = ctr_set[i].setdefault(fields[i+3], 0.05)
         # offset += len(ctr_set)
@@ -153,11 +158,19 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
         offset += 10
 
 
-
         # impression number
         # for i in range(len(impre_set)):
         #     features[offset+i] = impre_set[i].setdefault(fields[i+3], 0)
         # offset += len(impre_set)
+
+        # features[offset + 1] = round(math.log(impre_ad.setdefault(adId, 0)+1, 10), 4)
+        # features[offset + 2] = round(math.log(impre_adver.setdefault(adverId, 0)+1, 10), 4)
+        # features[offset + 4] = round(math.log(impre_query.setdefault(queryId, 0)+1, 10), 4)
+        # features[offset + 5] = round(math.log(impre_keyword.setdefault(keywordId, 0)+1, 10), 4)
+        # features[offset + 6] = round(math.log(impre_title.setdefault(titleId, 0)+1, 10), 4)
+        # features[offset + 7] = round(math.log(impre_user.setdefault(userId, 0)+1, 10), 4)
+        # offset += 8
+
 
         # click number
         # for i in range(len(click_set)):
@@ -249,19 +262,37 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
 
 
 # 生成不进行onehot处理的特征
-def build_x_no_transform(idset, ctr_set, user_profile, fm_v, file_read, file_write, similarity_start,
+def build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, file_read, file_write, similarity_start,
+                   fm_v=None,
                    has_id=True,
                    has_gbdt=False,
                    has_fm=False,
+                   file_format="fm",
                    dataset="train"):
-    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[2], idset[3], idset[4] \
-        , idset[5]
-    ctr_ad, ctr_ader, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_set[0], ctr_set[1], ctr_set[2], ctr_set[3] \
-        , ctr_set[4], ctr_set[5]
+    adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[4], idset[5], idset[6]\
+        , idset[8]
 
-    query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start)
+    discrete = False
+    query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start, discrete)
 
-    ''' position * 2, user * 2, CTR * 6, similarity * 1, fm * C(2, 20), GBDT * 600, id * 6'''
+    ''' position * 2, user * 2, (impression, click, CTR) * 9 * 3, combine ctr * 3, similarity * (2*(10)), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)'''
+
+    values = 2 + 2 + 27 + 3 + 2
+    dim = 2 + 2 + 27 + 3 + 2
+
+    if discrete:
+        dim += 18
+    if has_gbdt:
+        values += 30
+        dim += 600
+    if has_fm:
+        values += 190
+        dim += 190
+    if has_id:
+        values += 6
+        dim += 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
+    print "dimension:" + str(dim)
+    print "features:" + str(values)
 
     if has_gbdt:
         gbdt_feature = gbdt_handler.build_gbdt(dataset)
@@ -272,99 +303,161 @@ def build_x_no_transform(idset, ctr_set, user_profile, fm_v, file_read, file_wri
         features = {}
         fields = line.strip('\n').split('\t')
 
+        adId, adverId, depth, pos, queryId, keywordId, titleId, desId, userId = fields[3], fields[4], fields[5], \
+                                                                                fields[6], fields[7], fields[8], \
+                                                                                fields[9], fields[10], fields[11]
+
         # position [position, relative position]
-        features[0] = fields[6]
-        features[1] = round((float(fields[5]) - float(fields[6])) / float(fields[5]), 5)
-
+        offset = 0
+        features[offset] = int(pos)
+        offset += 1
+        features[offset] = round((float(fields[5]) - float(fields[6])) / float(fields[5]), 5)
+        offset += 1
+        features[offset] = int(depth)
+        offset += 1
         # user [age, gender]
-        features[2] = user_profile[int(fields[11])][0]  # list indices must be integers, not str
-        features[3] = user_profile[int(fields[11])][1]
+        age = int(user_profile.setdefault(fields[11], ['0', '0'])[0])
+        features[offset] = age
+        offset += 1
+        gender = int(user_profile.setdefault(fields[11], ['0', '0'])[1])
+        features[offset] = gender
+        offset += 1
 
-        # CTR [ad, advertiser, query, keyword, title, user]
-        features[4] = ctr_ad.setdefault(fields[3], 0.05)
-        features[5] = ctr_ader.setdefault(fields[4], 0.05)
-        features[6] = ctr_query.setdefault(fields[7], 0.05)
-        features[7] = ctr_keyword.setdefault(fields[8], 0.05)
-        features[8] = ctr_title.setdefault(fields[9], 0.05)
-        features[9] = ctr_user.setdefault(fields[11], 0.05)
+        # CTR [ad, advertiser, depth, pos, query, keyword, title, description, user]
 
-        # similarity, query-title, query-description, 暂时丢弃description
-        features[10] = query_title_similarity[row]
-        # features[20+query_desc_similarity[row]] = 1
+        ctr_ad, ctr_adver, ctr_depth, ctr_pos, ctr_query, ctr_keyword, ctr_title, ctr_user = ctr_set[0], ctr_set[1], \
+                                                                                             ctr_set[2], ctr_set[3], \
+                                                                                             ctr_set[4], ctr_set[5], \
+                                                                                             ctr_set[6], ctr_set[8]
 
-        offset = 11
+        impre_ad, impre_adver, impre_depth, impre_pos, impre_query, impre_keyword, impre_title, impre_user = impre_set[0], impre_set[1], \
+                                                                                                             impre_set[2], impre_set[3], \
+                                                                                                             impre_set[4], impre_set[5], \
+                                                                                                             impre_set[6], impre_set[8]
+
+        # for i in range(len(ctr_set)):
+        #     features[offset+i] = ctr_set[i].setdefault(fields[i+3], 0.05)
+        # offset += len(ctr_set)
+
+        features[offset + 1] = ctr_ad.setdefault(adId, 0.05)
+        features[offset + 2] = ctr_adver.setdefault(adverId, 0.05)
+        features[offset + 3] = ctr_pos.setdefault(pos, 0.05)
+        features[offset + 4] = ctr_query.setdefault(queryId, 0.05)
+        features[offset + 5] = ctr_keyword.setdefault(keywordId, 0.05)
+        features[offset + 6] = ctr_title.setdefault(titleId, 0.05)
+        features[offset + 7] = ctr_user.setdefault(userId, 0.05)
+        features[offset + 8] = ctr_depth.setdefault(depth, 0.05)
+        offset += 10
+
+
+        # impression number
+        # for i in range(len(impre_set)):
+        #     features[offset+i] = impre_set[i].setdefault(fields[i+3], 0)
+        # offset += len(impre_set)
+
+        # features[offset + 1] = round(math.log(impre_ad.setdefault(adId, 0)+1, 10), 4)
+        # features[offset + 2] = round(math.log(impre_adver.setdefault(adverId, 0)+1, 10), 4)
+        # features[offset + 4] = round(math.log(impre_query.setdefault(queryId, 0)+1, 10), 4)
+        # features[offset + 5] = round(math.log(impre_keyword.setdefault(keywordId, 0)+1, 10), 4)
+        # features[offset + 6] = round(math.log(impre_title.setdefault(titleId, 0)+1, 10), 4)
+        # features[offset + 7] = round(math.log(impre_user.setdefault(userId, 0)+1, 10), 4)
+        # offset += 8
+
+
+        # click number
+        # for i in range(len(click_set)):
+        #     features[offset+i] = click_set[i].setdefault(fields[i+3], 0)
+        # offset += len(click_set)
+
+        # combine ctr
+        # hash_ids = [hash(fields[3] + '_' + fields[7]) % 1e6, hash(fields[3] + '_' + fields[6]) % 1e6, hash(fields[3] + '_' + fields[11]) % 1e6]
+        # for i in range(len(combine_ctr_set)):
+        #     features[offset+i] = combine_ctr_set[i].setdefault(hash_ids[i], 0.05)
+        # offset += len(combine_ctr_set)
+
+        # similarity, query-title, query-description
+        if discrete:
+            features[offset+query_title_similarity[row]] = 1
+            features[offset+10+query_desc_similarity[row]] = 1
+            offset += 20
+        else:
+            features[offset] = query_title_similarity[row]
+            features[offset+1] = query_desc_similarity[row]
+            offset += 2
 
         if has_fm:
             k = 0
             for i in range(offset):
-                for j in range(i + 1, offset):
+                for j in range(i+1, offset):
                     if i in features and j in features and features[j] != 0 and features[i] != 0:
-                        features[k + offset] = float(features[i]) * float(features[j]) * sum(
-                            starmap(operator.mul, izip(fm_v[i], fm_v[j])))
+                        features[k+offset] = float(features[i])*float(features[j])*sum(starmap(operator.mul, izip(fm_v[i], fm_v[j])))
                     k += 1
             offset += k
 
         if has_gbdt:
             for k in gbdt_feature[row]:
-                features[k + offset] = 1
+                features[k+offset] = 1
             offset += 600
 
         if has_id:
             # ID [adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs]
             # ID类特征第一位留给unknown,所有整体后移一位
-            if fields[3] in adIDs:
-                features[offset] = adIDs[fields[3]] + 1  # 使用setdefault会改变矩阵的大小
-            else:  # 不要使用value.key in dict.keys()，这样会新建一个key的list,
-                features[offset] = 0  # 可以用value.key in dict
+            if adId in adIDs:
+                features[offset] = adIDs[adId]     # 使用setdefault会改变矩阵的大小
+            else:                                 # 不要使用value.key in dict.keys()，这样会新建一个key的list,
+                features[offset] = 0                            # 可以用value.key in dict
             offset += 1
 
-            if fields[4] in aderIDs:
-                features[offset] = aderIDs[fields[4]] + 1
+            if adverId in aderIDs:
+                features[offset] = aderIDs[adverId]
             else:
                 features[offset] = 0
             offset += 1
 
-            if fields[7] in queryIDs:
-                features[offset] = queryIDs[fields[7]] + 1
+            if queryId in queryIDs:
+                features[offset] = queryIDs[queryId]
             else:
                 features[offset] = 0
             offset += 1
 
-            if fields[8] in keywordIDs:
-                features[offset] = keywordIDs[fields[8]] + 1
+            if keywordId in keywordIDs:
+                features[offset] = keywordIDs[keywordId]
             else:
                 features[offset] = 0
             offset += 1
 
-            if fields[9] in titleIDs:
-                features[offset] = titleIDs[fields[9]] + 1
+            if titleId in titleIDs:
+                features[offset] = titleIDs[titleId]
             else:
                 features[offset] = 0
             offset += 1
 
-            if fields[11] in userIDs:
-                features[offset] = userIDs[fields[11]] + 1
-            else:
-                features[offset] = 0
+            # if userId in userIDs:
+            #     features[offset] = userIDs[userId]
+            # else:
+            #     features[offset] = 0
 
         if int(fields[0]) > 0:
             fields[0] = '1'
 
-        write_as_libfm(features, file_write, fields)
+        if file_format == "coordinate":
+            write_as_coor(features, file_write, row)
+        else:
+            write_as_libfm(features, file_write, fields)
 
         if row % 500000 == 0:
             print "rows: " + str(row)
         row += 1
-        del features
+        del features, fields
     file_read.close()
     file_write.close()
 
 
 def build_x():
 
-    train_to_path = constants.dir_path + "sample\\features\\train.basic_no-cl-im-comb.libfm"
-    valid_to_path = constants.dir_path + "sample\\features\\valid.basic_no-cl-im-comb.libfm"
-    test_to_path = constants.dir_path + "sample\\features\\test.basic_no-cl-im-comb.libfm"
+    train_to_path = constants.dir_path + "sample\\features\\train.no-trans_no-cl-comb_norm.libfm"
+    valid_to_path = constants.dir_path + "sample\\features\\valid.no-trans_no-cl-comb_norm.libfm"
+    test_to_path = constants.dir_path + "sample\\features\\test.no-trans_no-cl-comb_norm.libfm"
 
     stat = pd.read_csv(constants.dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
     print "Reading file finished."
@@ -379,24 +472,22 @@ def build_x():
     # data file definition, newline is necessary when write as libfm format
     train_from = open(constants.dir_path + "sample\\training.part")
     train_to = io.open(train_to_path, "w", newline='\n')
-    # valid_from = open(constants.dir_path + "sample\\validation.part")
-    # valid_to = io.open(valid_to_path, "w", newline='\n')
+    valid_from = open(constants.dir_path + "sample\\validation.part")
+    valid_to = io.open(valid_to_path, "w", newline='\n')
     test_from = open(constants.dir_path + "sample\\test.part")
     test_to = io.open(test_to_path, "w", newline='\n')
 
-    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
-                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train")
+    # build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
+    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train")
     # build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, valid_from, valid_to, 1800000,
     #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="validation")
-    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
-                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test")
+    # build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
+    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test")
 
-    # build_x_no_transform(idset, ctr_set, user_profile, fm_v, train_from, train_to, 0,
-    #                has_id=True, has_fm=False, dataset="train")
-    # build_x_no_transform(idset, ctr_set, user_profile, fm_v, valid_from, valid_to, 1800000,
-    #                has_id=True, has_fm=False, dataset="validation")
-    # build_x_no_transform(idset, ctr_set, user_profile, fm_v, test_from, test_to, 2000000,
-    #                has_id=True, has_fm=False,  dataset="test")
+    build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
+                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train")
+    build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
+                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test")
 
 
     # feature_files = [train_to_path, test_to_path]
