@@ -70,17 +70,19 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
                    has_gbdt=False,
                    has_fm=False,
                    file_format="fm",
-                   dataset="train"):
+                   dataset="train",
+                   has_user=False):
     adIDs, aderIDs, queryIDs, keywordIDs, titleIDs, userIDs = idset[0], idset[1], idset[4], idset[5], idset[6]\
         , idset[8]
 
     discrete = False
     query_title_similarity, query_desc_similarity = build_similarity_features(similarity_start, discrete)
 
-    ''' position * 2, user * 2, (impression, click, CTR) * 9 * 3, combine ctr * 3, similarity * (2*(10)), fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)'''
+    ''' position * 2, depth * 1, user * 2, (impression, click, CTR) * 8 * 3, combine ctr * 3, similarity * (2*(10)), 
+    fm * C(2, 20), GBDT * 600, id * (6(unknown) + lens)'''
 
-    values = 2 + 2 + 27 + 3 + 2
-    dim = 2 + 2 + 27 + 3 + 2
+    values = 2 + 1 + 2 + 8 + 2
+    dim = 5 + 4 + 10 + 8 + 2
 
     if discrete:
         dim += 18
@@ -92,7 +94,10 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
         dim += 190
     if has_id:
         values += 6
-        dim += 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs) + len(userIDs)
+        dim += 6 + len(adIDs) + len(aderIDs) + len(queryIDs) + len(keywordIDs) + len(titleIDs)
+        if has_user:
+            dim += + len(userIDs)
+    #
     print "dimension:" + str(dim)
     print "features:" + str(values)
 
@@ -121,13 +126,15 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
         offset += 4
         features[offset] = round((float(fields[5]) - float(fields[6])) / float(fields[5]), 5)
         offset += 1
+
+        # depth
         features[offset+int(depth)] = 1
         offset += 4
         # user [age, gender]
-        age = int(user_profile.setdefault(fields[11], ['0', '0'])[0])
-        features[offset+(age / 10)] = 1
-        offset += 13
-        gender = int(user_profile.setdefault(fields[11], ['0', '0'])[1])
+        age = int(user_profile.setdefault(userId, ['0', '0'])[1])
+        features[offset+age] = 1
+        offset += 7
+        gender = int(user_profile.setdefault(userId, ['0', '0'])[0])
         features[offset+gender] = 1
         offset += 3
 
@@ -147,15 +154,15 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
         #     features[offset+i] = ctr_set[i].setdefault(fields[i+3], 0.05)
         # offset += len(ctr_set)
 
-        features[offset + 1] = ctr_ad.setdefault(adId, 0.05)
-        features[offset + 2] = ctr_adver.setdefault(adverId, 0.05)
-        features[offset + 3] = ctr_pos.setdefault(pos, 0.05)
-        features[offset + 4] = ctr_query.setdefault(queryId, 0.05)
-        features[offset + 5] = ctr_keyword.setdefault(keywordId, 0.05)
-        features[offset + 6] = ctr_title.setdefault(titleId, 0.05)
-        features[offset + 7] = ctr_user.setdefault(userId, 0.05)
-        features[offset + 8] = ctr_depth.setdefault(depth, 0.05)
-        offset += 10
+        features[offset + 0] = ctr_ad.setdefault(adId, 0.05)
+        features[offset + 1] = ctr_adver.setdefault(adverId, 0.05)
+        features[offset + 2] = ctr_pos.setdefault(pos, 0.05)
+        features[offset + 3] = ctr_query.setdefault(queryId, 0.05)
+        features[offset + 4] = ctr_keyword.setdefault(keywordId, 0.05)
+        features[offset + 5] = ctr_title.setdefault(titleId, 0.05)
+        features[offset + 6] = ctr_user.setdefault(userId, 0.05)
+        features[offset + 7] = ctr_depth.setdefault(depth, 0.05)
+        offset += 8
 
 
         # impression number
@@ -240,10 +247,11 @@ def build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_p
                 features[offset] = 1
             offset += (len(titleIDs) + 1)
 
-            if userId in userIDs:
-                features[offset + userIDs[userId] + 1] = 1
-            else:
-                features[offset] = 1
+            if has_user:
+                if userId in userIDs:
+                    features[offset + userIDs[userId] + 1] = 1
+                else:
+                    features[offset] = 1
 
         if int(fields[0]) > 0:
             fields[0] = '1'
@@ -315,6 +323,7 @@ def build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, 
         offset += 1
         features[offset] = int(depth)
         offset += 1
+
         # user [age, gender]
         age = int(user_profile.setdefault(fields[11], ['0', '0'])[0])
         features[offset] = age
@@ -432,10 +441,10 @@ def build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, 
                 features[offset] = 0
             offset += 1
 
-            # if userId in userIDs:
-            #     features[offset] = userIDs[userId]
-            # else:
-            #     features[offset] = 0
+            if userId in userIDs:
+                features[offset] = userIDs[userId]
+            else:
+                features[offset] = 0
 
         if int(fields[0]) > 0:
             fields[0] = '1'
@@ -455,14 +464,14 @@ def build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, 
 
 def build_x():
 
-    train_to_path = constants.dir_path + "sample\\features\\train.no-trans_no-cl-comb_norm.libfm"
-    valid_to_path = constants.dir_path + "sample\\features\\valid.no-trans_no-cl-comb_norm.libfm"
-    test_to_path = constants.dir_path + "sample\\features\\test.no-trans_no-cl-comb_norm.libfm"
+    train_to_path = constants.dir_path + "sample\\features\\train.nn_no-cl-im-comb_t15.libfm"
+    valid_to_path = constants.dir_path + "sample\\features\\valid.nn_no-cl-im-comb_t15.libfm"
+    test_to_path = constants.dir_path + "sample\\features\\test.nn_no-cl-im-comb_t15.libfm"
 
     stat = pd.read_csv(constants.dir_path + "sample\\total.part", header=None, delimiter='\t', dtype=str)
     print "Reading file finished."
 
-    adIDs, aderIDs, depthIDs, posIDs, queryIDs, keywordIDs, titleIDs, desIDs, userIDs = id_handler.build_id_features(stat)
+    adIDs, aderIDs, depthIDs, posIDs, queryIDs, keywordIDs, titleIDs, desIDs, userIDs = id_handler.build_id_features(stat, 50)
     idset = [adIDs, aderIDs, depthIDs, posIDs, queryIDs, keywordIDs, titleIDs, desIDs, userIDs]   # shallow copy, idset[0]和adIDs指向同一地址
     impre_set, click_set, ctr_set, combine_ctr_set = ctr_handler.build_ctr(idset)
     user_profile = user_handler.build_user_profile(userIDs)
@@ -472,22 +481,22 @@ def build_x():
     # data file definition, newline is necessary when write as libfm format
     train_from = open(constants.dir_path + "sample\\training.part")
     train_to = io.open(train_to_path, "w", newline='\n')
-    valid_from = open(constants.dir_path + "sample\\validation.part")
-    valid_to = io.open(valid_to_path, "w", newline='\n')
+    # valid_from = open(constants.dir_path + "sample\\validation.part")
+    # valid_to = io.open(valid_to_path, "w", newline='\n')
     test_from = open(constants.dir_path + "sample\\test.part")
     test_to = io.open(test_to_path, "w", newline='\n')
 
-    # build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
-    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train")
+    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
+                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train", has_user=True)
     # build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, valid_from, valid_to, 1800000,
-    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="validation")
-    # build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
-    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test")
+    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="validation", has_user=False)
+    build_x_helper(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
+                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test", has_user=True)
 
-    build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
-                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train")
-    build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
-                   fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test")
+    # build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, train_from, train_to, 0,
+    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="train")
+    # build_x_no_transform(idset, impre_set, click_set, ctr_set, combine_ctr_set, user_profile, test_from, test_to, 2000000,
+    #                fm_v=None, has_id=True, has_fm=False, file_format="fm", dataset="test")
 
 
     # feature_files = [train_to_path, test_to_path]

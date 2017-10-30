@@ -34,17 +34,18 @@ def get_metric(test_y, train_pred):
 
 
 def train_model():
+    title = 'nn_no-cl-im-user-comb_t50'
     begin = datetime.datetime.now()
-    train_x = constants.dir_path + "sample\\features\\train.no-trans_no-cl-comb_norm.libfm"
+    train_x = constants.dir_path + "sample\\features\\train."+title+".libfm"
     train_y = np.loadtxt(constants.dir_path + "sample\\training.Y", dtype=int)
-    test_x = constants.dir_path + "sample\\features\\test.no-trans_no-cl-comb_norm.libfm"
+    test_x = constants.dir_path + "sample\\features\\test."+title+".libfm"
     test_y = np.loadtxt(constants.dir_path + "sample\\test.Y", dtype=int)
     validation_x = constants.dir_path + "sample\\features\\validation.gbdt.libfm"
 
     # svmlight格式自带label
     # train_data = load_svmlight_file(train_x)
 
-    rounds = 85
+    rounds = 100
     classifier = XGBClassifier(learning_rate=0.1, n_estimators=rounds, max_depth=3,
                                min_child_weight=1, gamma=0, subsample=0.8,
                                objective='binary:logistic', nthread=2)
@@ -69,7 +70,7 @@ def train_model():
                   "booster": "gbtree",
                   'eval_metric': 'logloss',
                   "eta": 0.1,
-                  "max_depth": 6,
+                  "max_depth": 8,
                   'silent': 0,
                   'subsample': 0.9,
                   'min_child_weight': 2,
@@ -83,10 +84,11 @@ def train_model():
 
         end = datetime.datetime.now()
         day = datetime.date.today()
-        np.savetxt(open(constants.project_path + "result/pred/no-cl-im-comb_gbdt_pred"+str(day), "w"), y_pred, fmt='%.5f')
+        np.savetxt(open(constants.project_path + "result/pred/"+title+"_gbdt_pred"+str(day), "w"), y_pred, fmt='%.5f')
 
         rcd = str(end) + '\n'
-        rcd += "gbdt: no-cl-im-comb 130" + '\n'
+        rcd += "gbdt: "+ title + '\n'
+        rcd += str(params) + '\n'
         rcd += "logloss: " + str(logloss) + '\n'
         rcd += "auc_test: " + str(auc_test) + '\n'
         rcd += "time: " + str(end - begin) + '\n' + '\n'
@@ -127,5 +129,5 @@ def test_read():
 
 if __name__ == '__main__':
     train_model()
-    onehot_feature()
+    # onehot_feature()
 

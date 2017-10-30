@@ -10,9 +10,10 @@ import constants
 from Utils import read_coo_mtx
 import joblib
 
-training_X_file = constants.dir_path + "sample\\features\\train.basic_no-cl-im-comb.libfm"
+title = 'nn_no-cl-im-comb_t15'
+training_X_file = constants.dir_path + "sample\\features\\train."+title+".libfm"
 training_Y_file = constants.dir_path + "sample\\training.Y"
-test_X_file = constants.dir_path + "sample\\features\\test.basic_no-cl-im-comb.libfm"
+test_X_file = constants.dir_path + "sample\\features\\test."+title+".libfm"
 test_Y_file = constants.dir_path + "sample\\test.Y"
 
 
@@ -24,8 +25,8 @@ def lr():
     # test_x = read_coo_mtx(test_X_file)
     # test_y = np.loadtxt(open(test_Y_file), dtype=int)
 
-    train_x, train_y = load_svmlight_file(training_X_file, n_features=363160)
-    test_x, test_y = load_svmlight_file(test_X_file, n_features=363160)
+    train_x, train_y = load_svmlight_file(training_X_file, n_features=178348)
+    test_x, test_y = load_svmlight_file(test_X_file, n_features=178348)
     # print train_x.shape, test_x.shape
     print "Loading data completed."
     print "Read time: " + str(datetime.datetime.now() - begin)
@@ -56,15 +57,15 @@ def lr():
 
         end = datetime.datetime.now()
         day = datetime.date.today()
-        np.savetxt(open(constants.project_path+"result/pred/basic_no-cl-im-comb_lr_pred"+str(day), "w"), prob_test, fmt='%.5f')
+        np.savetxt(open(constants.project_path+"result/pred/"+title+"_lr_pred_"+str(day), "w"), prob_test, fmt='%.5f')
 
         rcd = str(end) + '\n'
-        rcd += "lr: basic_no-cl-im-comb 130" + '\n'
+        rcd += "lr: "+title+" 130" + '\n'
         rcd += str(classifier.get_params()) + '\n'
         rcd += "accuracy: " + str(accuracy) + '\n'
         rcd += "logloss: " + str(logloss) + '\n'
         rcd += "auc_test: " + str(auc_test) + '\n'
-        rcd += "time: " + str(end - begin) + '\n' + '\n'
+        rcd += "time: " + str(end - begin) + '\n' + '\n' + '\n'
         print rcd
         log_file = open(constants.project_path+"result/oct_result", "a")
         log_file.write(rcd)

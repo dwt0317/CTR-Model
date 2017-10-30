@@ -130,7 +130,7 @@ time: 0:07:42.881000
 --------------------------------------------------------------------------
 
 
-2017-10-19 21:22:26.117000          <<<<<<----------------
+2017-10-19 21:22:26.117000
 lr: basic_no-cl-im-comb
 {'warm_start': False, 'C': 1.0, 'n_jobs': 1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 100, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': None, 'dual': False, 'tol': 1e-05, 'solver': 'liblinear', 'class_weight': None}
 accuracy: 0.951655483445
@@ -153,10 +153,87 @@ logloss: 0.178783722719
 auc_test: 0.714733467546
 
 
-gbdt不使用userid特征，使用30阈值的其他特征
-2017-10-20 11:20:22.535000          <<<<<<----------------
+gbdt不使用userid特征，使用30阈值的其他id特征
+2017-10-20 11:20:22.535000
 gbdt: no-cl-im-comb 85
 logloss: 0.178481724398
 auc_test: 0.711486045585
 time: 0:02:42.420000
+
+*以上的特征在gender和age部分有bug，age和gender弄反了
+------------------------------------------------------------------------
+
+dnn使用30阈值的id特征 +userid, 类别值进行了离散化处理
+dimension:127177
+features:21
+
+dnn使用30阈值的id特征 无userid, 类别值进行了离散化处理
+dimension:37408
+features:20
+('auc is ', 0.71937333630969158, 'logloss is ', 0.17610895395807161, ' at epoch  ', 12, ', time is 11.8145 min', ', train_loss is 3399.08')
+models/[10, 5]0.0001
+('auc is ', 0.72087742971226054, 'logloss is ', 0.17732254611564247, ' at epoch  ', 15, ', time is 11.8768 min', ', train_loss is 3152.19')
+models/[10, 5]0.0001
+('auc is ', 0.72094477272312152, 'logloss is ', 0.1784620605298177, ' at epoch  ', 18, ', time is 11.9712 min', ', train_loss is 3077.18')
+models/[10, 5]0.0001
+
+
+
+2017-10-23 20:37:02.826000
+gbdt: no-cl-im-user-comb_t30 100   <<<<<<----------------
+{'subsample': 0.9, 'nthread': 2, 'eta': 0.1, 'silent': 0, 'eval_metric': 'logloss', 'objective': 'binary:logistic', 'max_depth': 7, 'min_child_weight': 2, 'booster': 'gbtree'}
+logloss: 0.177739980327
+auc_test: 0.715829963332
+time: 0:03:44.066000
+
+2017-10-23 21:30:35.997000
+gbdt: nn_no-cl-im-user-comb_t50
+{'subsample': 0.9, 'nthread': 2, 'eta': 0.1, 'silent': 0, 'eval_metric': 'logloss', 'objective': 'binary:logistic', 'max_depth': 8, 'min_child_weight': 2, 'booster': 'gbtree'}
+logloss: 0.177191504207
+auc_test: 0.717966523545
+time: 0:04:12.827000
+
+
+
+修改特征bug之后的lr结果, t15_no_user是6w多维， t30_no_user是3w多维
+----------------------------------------------------------------------------
+2017-10-23 20:47:22.048000
+lr: no-cl-im-user-comb_t15 130    <<<<<<----------------
+{'warm_start': False, 'C': 1.0, 'n_jobs': 1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 130, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': None, 'dual': False, 'tol': 1e-05, 'solver': 'liblinear', 'class_weight': None}
+accuracy: 0.952195478045
+logloss: 0.179486001066
+auc_test: 0.713259784295
+time: 0:03:53.677000
+
+2017-10-23 21:43:53.785000
+lr: nn_no-cl-im-comb_t15 130
+{'warm_start': False, 'C': 1.0, 'n_jobs': 1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 130, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': None, 'dual': False, 'tol': 1e-05, 'solver': 'liblinear', 'class_weight': None}
+accuracy: 0.952205477945
+logloss: 0.177985424685
+auc_test: 0.718329633661
+time: 0:04:03.215000
+
+
+
+2017-10-23 20:59:38.046000
+lr: no-cl-im-user-comb_t5 130
+{'warm_start': False, 'C': 1.0, 'n_jobs': 1, 'verbose': 0, 'intercept_scaling': 1, 'fit_intercept': True, 'max_iter': 130, 'penalty': 'l2', 'multi_class': 'ovr', 'random_state': None, 'dual': False, 'tol': 1e-05, 'solver': 'liblinear', 'class_weight': None}
+accuracy: 0.951830481695
+logloss: 0.18226705626
+auc_test: 0.707227172989
+time: 0:05:44.559000
+---------------------------------------------------------------------------------
+
+
+
+2017-10-23 21:12:26.409000
+fm: nn_no-cl-im-user-comb_t15 45
+logloss: 0.178003857
+auc_test: 0.720074189304
+
+
+2017-10-23 23:04:08.169000
+fm: nn_no-cl-im-comb_t15 45
+logloss: 0.178190694623
+auc_test: 0.719382308252
 
